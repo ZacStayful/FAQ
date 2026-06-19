@@ -15,17 +15,16 @@ export const config = {
 };
 
 export default function middleware(request) {
-  const USER = process.env.SITE_USER || 'stayful';
   const PASS = process.env.SITE_PASSWORD || 'changeme-set-SITE_PASSWORD';
 
+  // Password-only: the username is ignored, so you can leave it blank or type
+  // anything — only the password must match SITE_PASSWORD.
   const header = request.headers.get('authorization') || '';
   if (header.startsWith('Basic ')) {
     try {
       const decoded = atob(header.slice(6));
-      const sep = decoded.indexOf(':');
-      const user = decoded.slice(0, sep);
-      const pass = decoded.slice(sep + 1);
-      if (user === USER && pass === PASS) {
+      const pass = decoded.slice(decoded.indexOf(':') + 1);
+      if (pass === PASS) {
         return; // authorised — let the request continue to the app
       }
     } catch {
