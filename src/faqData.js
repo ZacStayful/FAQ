@@ -848,3 +848,92 @@ export const FAQS = [
     slide: 'Vet Guests',
   },
 ];
+
+// Smart words / concept synonyms.
+// Maps an abstract or off-vocabulary term a presenter might type to the FAQ
+// id(s) that hold the CLOSEST helpful answer — even when there is no exact
+// question for it (e.g. "compliance", "pets", "safety certificates"). These
+// feed both the live matching and the typeahead suggestions, so a near-miss
+// search still surfaces something useful instead of "no match".
+export const SMART_WORDS = {
+  // Legal / tax / regulatory
+  compliance: [12, 40, 22, 36],
+  regulations: [12, 40, 22],
+  regulatory: [12, 40],
+  legal: [12, 40, 36],
+  law: [12, 40],
+  rules: [12, 40, 36],
+  tax: [40, 12],
+  taxes: [40, 12],
+  vat: [29, 35],
+  hmrc: [40],
+  accountant: [40],
+  licence: [40, 12],
+  license: [40, 12],
+  licensing: [40, 12],
+  planning: [40, 12],
+  // Safety / certificates (nearest: onboarding checks + insurance + maintenance)
+  safety: [24, 22, 6],
+  certificate: [24, 12],
+  certificates: [24, 12],
+  certification: [24, 12],
+  gas: [24, 6],
+  electrical: [24, 6],
+  epc: [24, 12],
+  fire: [24, 22],
+  legionella: [24, 6],
+  // Money
+  cost: [44, 29, 35],
+  costs: [44, 29, 35],
+  fees: [29, 35, 44, 30],
+  commission: [29, 44],
+  income: [1, 17, 31, 44],
+  earnings: [1, 44],
+  profit: [1, 32, 44],
+  yield: [1, 8, 32],
+  roi: [1, 8, 21],
+  guarantee: [17, 31, 42],
+  guaranteed: [17, 31],
+  refund: [37, 30],
+  deposit: [22, 18],
+  payment: [38],
+  // Property / setup
+  furnishing: [25, 26],
+  furniture: [25, 26],
+  keys: [26, 45, 2],
+  checkin: [2, 43, 45],
+  utilities: [28],
+  bills: [28],
+  wifi: [28],
+  broadband: [28],
+  thermostat: [26],
+  // Guests / protection
+  pets: [20, 7],
+  pet: [20, 7],
+  noise: [7, 18, 19],
+  neighbours: [7, 19],
+  neighbors: [7, 19],
+  cameras: [22, 7],
+  sensors: [22, 7],
+  security: [22, 18, 7],
+  theft: [49, 22],
+  damage: [18, 22, 6],
+  tourists: [20],
+  corporate: [20],
+  // Service / performance
+  superhost: [46, 16],
+  reviews: [46, 3, 16],
+  ranking: [46],
+  algorithm: [46],
+  remote: [43, 13],
+  abroad: [43, 41, 13],
+  overseas: [43, 13],
+  // Contract
+  contract: [36, 37, 39],
+  cancellation: [37],
+  exit: [37, 39],
+  notice: [36, 37, 45],
+  portfolio: [30, 21],
+  multiple: [30],
+};
+

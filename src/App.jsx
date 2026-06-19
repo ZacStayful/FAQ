@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { FAQS, CATEGORIES, TIERS, PROFILES } from './faqData.js';
+import { FAQS, CATEGORIES, TIERS, PROFILES, SMART_WORDS } from './faqData.js';
 
 // Web Speech API — runs locally in the browser. No external request.
 const SpeechRecognition =
@@ -22,13 +22,28 @@ function normalise(s) {
     .trim();
 }
 
+// Smart words → which FAQ ids each concept term should surface.
+const SMART_BY_ID = {};
+for (const [term, ids] of Object.entries(SMART_WORDS)) {
+  for (const id of ids) (SMART_BY_ID[id] ||= []).push(normalise(term));
+}
+
 // Pre-build a lightweight match index from each FAQ.
 const INDEX = FAQS.map((faq) => {
   const phrases = [...faq.keywords, faq.category].map(normalise).filter(Boolean);
+  const smart = SMART_BY_ID[faq.id] || [];
   const qwords = normalise(faq.question)
     .split(' ')
     .filter((w) => w.length > 2 && !STOPWORDS.has(w));
-  return { faq, phrases, qwords };
+  // Single-word tokens used for fast prefix (typeahead) matching.
+  const prefixWords = [
+    ...new Set([
+      ...qwords,
+      ...smart,
+      ...phrases.flatMap((p) => p.split(' ')),
+    ].filter((w) => w.length > 2 && !STOPWORDS.has(w))),
+  ];
+  return { faq, phrases, smart, qwords, prefixWords };
 });
 
 const FAQ_BY_ID = Object.fromEntries(FAQS.map((f) => [f.id, f]));
@@ -52,12 +67,17 @@ function detectCommand(text) {
 }
 
 // Score every FAQ against the query text. Returns ranked matches.
-// When a lead profile is active, cards relevant to that profile get a small
-// boost so the answers that matter for this lead type surface first.
+// Matching is layered so even a near-miss surfaces the closest answer:
+//   - exact multi-word phrase / keyword (strong)
+//   - single-word keyword, category or smart-word/synonym match
+//   - prefix match on the word being typed (typeahead — "comp" → compliance)
+// When a lead profile is active, its relevant cards get a small boost.
 function rankMatches(text, profile) {
   const t = normalise(text);
   if (!t) return [];
-  const words = new Set(t.split(' '));
+  const tokens = t.split(' ');
+  const words = new Set(tokens);
+  const lastToken = tokens[tokens.length - 1];
   const results = [];
   for (const item of INDEX) {
     let score = 0;
@@ -68,7 +88,20 @@ function rankMatches(text, profile) {
         score += 1.5;
       }
     }
+    // Smart-word / synonym hits (e.g. "compliance" → legal/tax/insurance cards)
+    for (const s of item.smart) {
+      if (s.includes(' ') ? t.includes(s) : words.has(s)) score += 1.4;
+    }
     for (const w of item.qwords) if (words.has(w)) score += 0.5;
+    // Prefix match on whatever word is currently being typed.
+    if (lastToken && lastToken.length >= 2) {
+      for (const w of item.prefixWords) {
+        if (w !== lastToken && w.startsWith(lastToken)) {
+          score += 0.6;
+          break;
+        }
+      }
+    }
     if (score > 0) {
       if (item.faq.tier === 1) score += 0.3;
       if (profile && item.faq.profiles?.includes(profile)) score += 0.4;
@@ -77,6 +110,10 @@ function rankMatches(text, profile) {
   }
   return results.sort((a, b) => b.score - a.score);
 }
+
+// Score below which we treat the top result as an approximate / related match
+// (no exact answer existed, but this is the closest).
+const CLOSEST_MATCH_THRESHOLD = 3;
 
 // Keep only the last N words so matching tracks the current utterance.
 function recentWindow(text, words = 16) {
@@ -150,11 +187,13 @@ export default function App() {
   const [supported] = useState(!!SpeechRecognition);
   const [activeIndex, setActiveIndex] = useState(0);
   const [expanded, setExpanded] = useState(false);
-  const [pinned, setPinned] = useState(null); // faq chosen from Browse
+  const [pinned, setPinned] = useState(null); // faq chosen from Browse / suggestion
   const [mode, setMode] = useState('listen'); // 'listen' | 'browse'
   const [browseCat, setBrowseCat] = useState('All');
   const [profile, setProfile] = useState(''); // '' = all profiles
   const [error, setError] = useState('');
+  const [focused, setFocused] = useState(false); // search input focus
+  const [suggestIndex, setSuggestIndex] = useState(-1);
 
   const recRef = useRef(null);
   const listeningRef = useRef(false);
@@ -164,13 +203,42 @@ export default function App() {
   const ranked = useMemo(() => rankMatches(query, profile), [query, profile]);
   const current = pinned || ranked[activeIndex]?.faq || null;
   const alternates = ranked.slice(0, 5);
+  const suggestions = useMemo(
+    () => (query.trim() ? ranked.slice(0, 6) : []),
+    [query, ranked]
+  );
+  const topScore = ranked[0]?.score ?? 0;
+  const approximate = !pinned && current && topScore < CLOSEST_MATCH_THRESHOLD;
+  const showSuggest = focused && !pinned && suggestions.length > 0;
 
   // New query → reset focus to the top match and clear any pinned card.
   useEffect(() => {
     setActiveIndex(0);
     setExpanded(false);
     setPinned(null);
+    setSuggestIndex(-1);
   }, [query]);
+
+  function pickSuggestion(faq) {
+    setPinned(faq);
+    setFocused(false);
+    setSuggestIndex(-1);
+    inputRef.current?.blur();
+  }
+
+  function onSearchKeyDown(e) {
+    if (!showSuggest) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSuggestIndex((i) => Math.min(i + 1, suggestions.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSuggestIndex((i) => Math.max(i - 1, -1));
+    } else if (e.key === 'Enter' && suggestIndex >= 0 && suggestions[suggestIndex]) {
+      e.preventDefault();
+      pickSuggestion(suggestions[suggestIndex].faq);
+    }
+  }
 
   function handleCommand(cmd) {
     switch (cmd) {
@@ -360,6 +428,10 @@ export default function App() {
               placeholder="Search a question…  ( / to focus )"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setTimeout(() => setFocused(false), 120)}
+              onKeyDown={onSearchKeyDown}
+              autoComplete="off"
               autoFocus
             />
             {query && (
@@ -381,12 +453,42 @@ export default function App() {
             >
               {listening ? '● Listening' : '🎤'}
             </button>
+
+            {showSuggest && (
+              <ul className="suggest-list">
+                {suggestions.map((s, i) => (
+                  <li key={s.faq.id}>
+                    <button
+                      type="button"
+                      className={`suggest-item${i === suggestIndex ? ' active' : ''}`}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        pickSuggestion(s.faq);
+                      }}
+                    >
+                      <span
+                        className="suggest-dot"
+                        style={{ background: TIERS[s.faq.tier].color }}
+                      />
+                      <span className="suggest-q">{s.faq.question}</span>
+                      <span className="suggest-cat">{s.faq.category}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {!supported && (
             <p className="error">Voice unsupported here — typing still works.</p>
           )}
           {error && <p className="error">{error}</p>}
+
+          {approximate && (
+            <p className="closest-note">
+              No exact answer for that — here’s the closest match that may help.
+            </p>
+          )}
 
           {current ? (
             <AnswerPanel
