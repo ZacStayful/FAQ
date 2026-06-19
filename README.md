@@ -60,17 +60,8 @@ Stayful Web Meeting Presenter Script.
 
 ## Access / security
 
-The whole app is gated by HTTP Basic Auth at the Vercel edge
-(`middleware.js`), so the confidential content — including the JS bundle — is
-not served to anyone without credentials.
-
-Set credentials in **Vercel → Project → Settings → Environment Variables**:
-
-- `SITE_USER` — optional, defaults to `stayful`
-- `SITE_PASSWORD` — **set this to a real secret**, then redeploy
-
-Until `SITE_PASSWORD` is set, a placeholder fallback applies — change it.
-Also keep the **GitHub repository private** (Settings → General → Danger Zone →
-Change visibility) so the source and FAQ data aren't public.
+The app is publicly accessible (no password). The content is confidential, so
+keeping the **GitHub repository private** is recommended so the source and FAQ
+data aren't browsable on GitHub. A `noindex` tag keeps it out of search engines.
 
 > Confidential — internal use only.
