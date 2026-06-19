@@ -1,14 +1,22 @@
 // Stayful Sales Assistant — FAQ data
 // Pre-loaded reference data. No backend, no API calls during use.
 //
-// Source: Stayful Web Meeting Presenter Script (CONFIDENTIAL — INTERNAL USE ONLY)
+// Sources:
+//  - Stayful Web Meeting Presenter Script (CONFIDENTIAL — INTERNAL USE ONLY)
+//  - Stayful Lead Intelligence System (Objection + Conversion Intelligence,
+//    W21–W25) — used to set tiers, add verbatim keywords, and add the
+//    high-frequency objections that had no card (remote management, 72-hour
+//    access, listing ranking, pricing control, net "what you keep", early-weeks
+//    ramp-up, theft).
 //
 // tier:     1 = every meeting, 2 = most meetings, 3 = common, 4 = situational
 // category: Revenue | Fees | Service | Contract | Setup | Legal & Tax | Situations
+// profiles: lead profile types this answer is especially relevant to
 // headline: glanceable one-line gist shown big while you keep talking
 // answer:   full detail underneath
-// keywords: natural phrasings a LEAD actually uses — used to match live speech
-// slide:    exact voice command to navigate the presentation, or null for verbal-only
+// keywords: natural phrasings a LEAD actually uses (incl. verbatim from
+//           Objection Intelligence) — used to match live speech
+// slide:    exact voice command to navigate the presentation, or null
 
 export const TIERS = {
   1: { label: 'Tier 1 · Every meeting', short: 'Tier 1', color: 'rgb(93,129,86)' },
@@ -28,11 +36,16 @@ export const CATEGORIES = [
   'Situations',
 ];
 
+// Lead profile types (from the Lead Intelligence System).
+export const PROFILES = ['Buy-to-STL', 'STL Switch', 'Abroad', 'Ex-STL'];
+const ALL_PROFILES = [...PROFILES];
+
 export const FAQS = [
   {
     id: 1,
     tier: 1,
     category: 'Revenue',
+    profiles: ALL_PROFILES,
     question: 'How much will I actually make?',
     headline: 'Two figures — gross and net. The net is what matters.',
     answer:
@@ -48,6 +61,7 @@ export const FAQS = [
     id: 2,
     tier: 1,
     category: 'Service',
+    profiles: ALL_PROFILES,
     question: 'What do you actually do — is it fully hands-off?',
     headline: 'Fully hands-off — we run everything except your bills.',
     answer:
@@ -64,6 +78,7 @@ export const FAQS = [
     id: 3,
     tier: 2,
     category: 'Revenue',
+    profiles: ALL_PROFILES,
     question: 'Why is Year 1 lower than Year 2?',
     headline: 'Year 1 = 80% while reviews build and pricing dials in.',
     answer:
@@ -79,6 +94,7 @@ export const FAQS = [
     id: 4,
     tier: 2,
     category: 'Revenue',
+    profiles: ALL_PROFILES,
     question: 'Those numbers seem high — I’ve seen lower estimates elsewhere.',
     headline: 'Live postcode data — and Year 1 is already discounted 20%.',
     answer:
@@ -94,6 +110,7 @@ export const FAQS = [
     id: 5,
     tier: 1,
     category: 'Service',
+    profiles: ALL_PROFILES,
     question: 'Who handles cleaning and changeovers?',
     headline: 'We handle every clean and linen change — guest-funded.',
     answer:
@@ -109,6 +126,7 @@ export const FAQS = [
     id: 6,
     tier: 2,
     category: 'Service',
+    profiles: ALL_PROFILES,
     question: 'What about maintenance and repairs?',
     headline: 'We coordinate repairs — up to £300 without calling you.',
     answer:
@@ -124,6 +142,7 @@ export const FAQS = [
     id: 7,
     tier: 1,
     category: 'Service',
+    profiles: ALL_PROFILES,
     question: 'What about problem guests — how do you vet bookings?',
     headline: 'Every guest vetted — no parties, stag or hen bookings.',
     answer:
@@ -132,6 +151,8 @@ export const FAQS = [
       'problem guests', 'bad guests', 'parties', 'party', 'vet guests',
       'vetting', 'screening', 'who do you let in', 'dodgy guests', 'stag',
       'hen', 'how do you check guests', 'troublesome guests',
+      'right type of guests', 'getting the right type of guests',
+      'wrong type of guests', 'how do you screen guests',
     ],
     slide: 'Vet Guests',
   },
@@ -139,6 +160,7 @@ export const FAQS = [
     id: 8,
     tier: 1,
     category: 'Revenue',
+    profiles: ['Buy-to-STL', 'STL Switch'],
     question: 'How does short-let compare to a long let?',
     headline: 'Net beats a long let — even on conservative Year 1.',
     answer:
@@ -155,6 +177,7 @@ export const FAQS = [
     id: 9,
     tier: 2,
     category: 'Service',
+    profiles: ALL_PROFILES,
     question: 'Which platforms do you list on?',
     headline: 'Airbnb, Booking.com + direct — daily dynamic pricing.',
     answer:
@@ -170,6 +193,7 @@ export const FAQS = [
     id: 10,
     tier: 2,
     category: 'Revenue',
+    profiles: ['Buy-to-STL', 'STL Switch', 'Ex-STL'],
     question: 'Do you have real results I can look at?',
     headline: 'Real 2025 results — York, Manchester, Lincoln.',
     answer:
@@ -178,6 +202,7 @@ export const FAQS = [
       'case studies', 'real results', 'examples', 'proof', 'evidence',
       'other properties', 'track record', 'do you have examples', 'results',
       'can you show me', 'real numbers', 'have you done this before',
+      'comparable property', 'comparable results',
     ],
     slide: 'Your Experience',
   },
@@ -185,6 +210,7 @@ export const FAQS = [
     id: 11,
     tier: 3,
     category: 'Situations',
+    profiles: ['STL Switch', 'Ex-STL'],
     question: 'I’m comparing you with another company (Pass the Keys / Hostmaker).',
     headline: '15% vs 20–22%, contractor network, Slack 24h response.',
     answer:
@@ -200,6 +226,7 @@ export const FAQS = [
     id: 12,
     tier: 2,
     category: 'Legal & Tax',
+    profiles: ['Buy-to-STL'],
     question: 'Do I need a special mortgage or insurance?',
     headline: 'Holiday-let mortgage or consent, plus short-let insurance.',
     answer:
@@ -215,6 +242,7 @@ export const FAQS = [
     id: 13,
     tier: 2,
     category: 'Service',
+    profiles: ALL_PROFILES,
     question: 'How will I know what’s happening with my property?',
     headline: 'Dedicated Slack, live calendar, monthly statements.',
     answer:
@@ -230,6 +258,7 @@ export const FAQS = [
     id: 14,
     tier: 1,
     category: 'Setup',
+    profiles: ALL_PROFILES,
     question: 'How long does it take to go live?',
     headline: 'Live and taking bookings in 2–4 weeks from signing.',
     answer:
@@ -245,6 +274,7 @@ export const FAQS = [
     id: 15,
     tier: 3,
     category: 'Service',
+    profiles: ALL_PROFILES,
     question: 'How does the dynamic pricing work?',
     headline: 'Rate auto-adjusts daily on demand, events and competitors.',
     answer:
@@ -260,6 +290,7 @@ export const FAQS = [
     id: 16,
     tier: 3,
     category: 'Revenue',
+    profiles: ['Buy-to-STL', 'STL Switch'],
     question: 'What occupancy are you projecting?',
     headline: '~80% of projected occupancy in Year 1.',
     answer:
@@ -272,16 +303,19 @@ export const FAQS = [
   },
   {
     id: 17,
-    tier: 2,
+    tier: 1,
     category: 'Revenue',
-    question: 'What does the monthly breakdown / seasonality look like?',
-    headline: 'Peak vs low months — the annual average is the number.',
+    profiles: ALL_PROFILES,
+    question: 'How consistent is the income — what about quiet months?',
+    headline: 'Even the quietest month earns — anchor on the annual average.',
     answer:
-      'The best months for your area are the peak season — that’s when occupancy spikes and rates go up. The slower months are usually January and February, which are the toughest across the board, but even then you’re still looking at a solid net figure. The annual average smooths all of that out — that’s the number to anchor on.',
+      'The income is less even than a long let month to month, but it’s consistent across the year. The best months are your peak season; the slowest are usually January and February. Even in those months you’re still earning a solid net figure — the worst month is typically comparable to what a long let pays, and your best months far exceed it. The number to anchor on is the annual average, which smooths the seasonality out.',
     keywords: [
-      'monthly', 'seasonality', 'busy months', 'quiet months', 'peak',
-      'low season', 'off season', 'month by month', 'breakdown',
-      'which months', 'seasonal', 'busy season',
+      'income consistency', 'how consistent is the income', 'consistent income',
+      'consistency', 'monthly', 'seasonality', 'busy months', 'quiet months',
+      'peak', 'low season', 'off season', 'month by month', 'breakdown',
+      'which months', 'seasonal', 'busy season', 'january and february',
+      'dropping off in winter', 'income dropping off',
     ],
     slide: 'Investment Returns',
   },
@@ -289,6 +323,7 @@ export const FAQS = [
     id: 18,
     tier: 3,
     category: 'Service',
+    profiles: ALL_PROFILES,
     question: 'What happens if there’s damage?',
     headline: 'Photographed each stay — recovered via AirCover or deposit.',
     answer:
@@ -296,7 +331,7 @@ export const FAQS = [
     keywords: [
       'damage', 'whats damaged', 'broken by guest', 'deposit', 'aircover',
       'air cover', 'who pays for damage', 'if a guest breaks something',
-      'damages', 'something gets damaged',
+      'damages', 'something gets damaged', 'damaged or stolen',
     ],
     slide: 'Vet Guests',
   },
@@ -304,6 +339,7 @@ export const FAQS = [
     id: 19,
     tier: 3,
     category: 'Situations',
+    profiles: ALL_PROFILES,
     question: 'I’m worried about wear and tear.',
     headline: 'Short stays are gentler — inspected and photographed.',
     answer:
@@ -319,14 +355,16 @@ export const FAQS = [
     id: 20,
     tier: 3,
     category: 'Service',
+    profiles: ALL_PROFILES,
     question: 'Who actually books and stays in these properties?',
-    headline: 'Corporate, NHS, leisure — 30–40% returning guests.',
+    headline: 'Corporate, NHS & healthcare, leisure — 30–40% returning.',
     answer:
-      'It depends on your location, but typically a mix of corporate contractors, NHS and hospital staff, city-break and leisure tourism, university and relocation stays. We only highlight demand drivers that genuinely apply to your area. And 30–40% of our bookings come from returning guests, which significantly reduces the randomness of who’s in your property.',
+      'It depends on your location, but typically a mix of corporate contractors, NHS and healthcare workers, city-break and leisure tourism, university and relocation stays. Properties near hospital clusters do particularly well with NHS and medical-visitor bookings. We only highlight demand drivers that genuinely apply to your area, and 30–40% of our bookings come from returning guests — which significantly reduces the randomness of who’s in your property.',
     keywords: [
       'who stays', 'who books', 'what kind of guests', 'who are the guests',
       'type of guest', 'demand', 'who rents it', 'what guests',
-      'who would stay there', 'who actually books',
+      'who would stay there', 'who actually books', 'healthcare workers',
+      'nhs workers', 'healthcare and nhs', 'nhs',
     ],
     slide: 'Who Books',
   },
@@ -334,6 +372,7 @@ export const FAQS = [
     id: 21,
     tier: 3,
     category: 'Revenue',
+    profiles: ['Buy-to-STL', 'STL Switch', 'Ex-STL'],
     question: 'Do your projections actually match reality?',
     headline: 'Manchester: £56.9k actual vs £62k projected.',
     answer:
@@ -349,6 +388,7 @@ export const FAQS = [
     id: 22,
     tier: 2,
     category: 'Service',
+    profiles: ALL_PROFILES,
     question: 'What insurance and guest protection is in place?',
     headline: '£200 deposit, ID checks, £100k + £2.5M AirCover.',
     answer:
@@ -364,6 +404,7 @@ export const FAQS = [
     id: 23,
     tier: 3,
     category: 'Service',
+    profiles: ALL_PROFILES,
     question: 'Do you inspect the property?',
     headline: 'Inspections 1–3 times a year, plus per-stay photos.',
     answer:
@@ -379,6 +420,7 @@ export const FAQS = [
     id: 24,
     tier: 2,
     category: 'Setup',
+    profiles: ALL_PROFILES,
     question: 'What’s the onboarding process, step by step?',
     headline: 'Sign → onboarding call → photos → listing → live.',
     answer:
@@ -394,6 +436,7 @@ export const FAQS = [
     id: 25,
     tier: 2,
     category: 'Setup',
+    profiles: ['Buy-to-STL', 'Abroad'],
     question: 'What if the property isn’t furnished yet?',
     headline: 'We can furnish it — itemised quote, recovered fast.',
     answer:
@@ -409,6 +452,7 @@ export const FAQS = [
     id: 26,
     tier: 3,
     category: 'Setup',
+    profiles: ['Buy-to-STL', 'STL Switch', 'Abroad'],
     question: 'What setup do I need to provide?',
     headline: 'Just a smart thermostat (~£200) and key safe (~£60).',
     answer:
@@ -424,6 +468,7 @@ export const FAQS = [
     id: 27,
     tier: 3,
     category: 'Service',
+    profiles: ['STL Switch', 'Ex-STL'],
     question: 'Can I use my own cleaners?',
     headline: 'Possible if they meet our standards — most use ours.',
     answer:
@@ -439,6 +484,7 @@ export const FAQS = [
     id: 28,
     tier: 2,
     category: 'Service',
+    profiles: ALL_PROFILES,
     question: 'What am I responsible for?',
     headline: 'Only the bills — utilities, council tax, mortgage.',
     answer:
@@ -454,14 +500,16 @@ export const FAQS = [
     id: 29,
     tier: 1,
     category: 'Fees',
+    profiles: ALL_PROFILES,
     question: 'What’s your management fee?',
     headline: '15% + VAT of gross — all-in, no hidden charges.',
     answer:
-      'Our standard management fee is 15% plus VAT of gross revenue. That’s the full fee — everything is included: guest comms, pricing, cleaning coordination, maintenance and monthly reporting. There are no hidden charges on top.',
+      'Our standard management fee is 15% plus VAT of gross revenue. That’s the full fee — everything is included: guest comms, pricing, cleaning coordination, maintenance and monthly reporting. There are no hidden charges on top. (For a full net breakdown of what you keep, see “what you actually keep”.)',
     keywords: [
       'fee', 'cost', 'how much do you charge', 'whats your cut', 'commission',
       'management fee', 'what do you take', 'your fee', 'charges', 'price',
       'how much do you take', 'whats it going to cost', 'what does it cost',
+      'fee structure', 'understand the costs', 'understand the fees',
     ],
     slide: null,
   },
@@ -469,6 +517,7 @@ export const FAQS = [
     id: 30,
     tier: 2,
     category: 'Fees',
+    profiles: ALL_PROFILES,
     question: 'Is there a discount or special offer?',
     headline: '13% if signed by the deadline · 12% for referrals.',
     answer:
@@ -482,8 +531,9 @@ export const FAQS = [
   },
   {
     id: 31,
-    tier: 3,
+    tier: 1,
     category: 'Revenue',
+    profiles: ALL_PROFILES,
     question: 'What happens if the property sits empty?',
     headline: 'Slow months are factored in — annual average wins.',
     answer:
@@ -491,7 +541,7 @@ export const FAQS = [
     keywords: [
       'empty', 'void', 'sits empty', 'no bookings', 'not booked', 'vacant',
       'quiet periods', 'what if it doesnt get booked', 'unbooked',
-      'what if nobody books',
+      'what if nobody books', 'income consistency', 'dropping off in winter',
     ],
     slide: 'Investment Returns',
   },
@@ -499,6 +549,7 @@ export const FAQS = [
     id: 32,
     tier: 2,
     category: 'Revenue',
+    profiles: ['Buy-to-STL', 'STL Switch'],
     question: 'What does this look like after my mortgage?',
     headline: 'A clear monthly profit after the mortgage is covered.',
     answer:
@@ -514,6 +565,7 @@ export const FAQS = [
     id: 33,
     tier: 3,
     category: 'Service',
+    profiles: ALL_PROFILES,
     question: 'What’s your response time and office hours?',
     headline: 'Slack, 24h reply · Mon–Fri 9:30–5:00.',
     answer:
@@ -529,6 +581,7 @@ export const FAQS = [
     id: 34,
     tier: 3,
     category: 'Service',
+    profiles: ALL_PROFILES,
     question: 'Can I see my bookings and income?',
     headline: 'Live booking calendar + monthly income statements.',
     answer:
@@ -544,6 +597,7 @@ export const FAQS = [
     id: 35,
     tier: 2,
     category: 'Fees',
+    profiles: ALL_PROFILES,
     question: 'Is there a software fee or any other costs?',
     headline: '£42/month software fee — the only extra.',
     answer:
@@ -559,14 +613,16 @@ export const FAQS = [
     id: 36,
     tier: 1,
     category: 'Contract',
+    profiles: ALL_PROFILES,
     question: 'What’s the contract term?',
     headline: '6-month fixed, then 3-month rolling notice.',
     answer:
       'It’s a six-month fixed term to start — that gives us both time to properly ramp up, build the reviews, optimise pricing and let the listing find its audience. After the initial term it moves to a three-month rolling notice, so either of us can step away with three months’ notice at any point.',
     keywords: [
       'contract', 'term', 'how long is the contract', 'tie in', 'tie-in',
-      'commitment', 'length of contract', 'lock in', 'how long am i signing up',
-      'contract length', 'notice period',
+      'commitment', 'length of contract', 'lock in', 'locked in',
+      'are we locked in', 'how long am i signing up', 'contract length',
+      'notice period',
     ],
     slide: null,
   },
@@ -574,6 +630,7 @@ export const FAQS = [
     id: 37,
     tier: 2,
     category: 'Contract',
+    profiles: ALL_PROFILES,
     question: 'What if I want to exit early?',
     headline: '£1,000 early exit fee within the first 6 months.',
     answer:
@@ -589,6 +646,7 @@ export const FAQS = [
     id: 38,
     tier: 3,
     category: 'Setup',
+    profiles: ALL_PROFILES,
     question: 'When and how do I get paid?',
     headline: 'Paid 1st–5th each month for the prior month’s stays.',
     answer:
@@ -604,14 +662,16 @@ export const FAQS = [
     id: 39,
     tier: 2,
     category: 'Contract',
+    profiles: ALL_PROFILES,
     question: 'Six months feels like a long commitment.',
-    headline: '6 months protects the ramp-up — for both sides.',
+    headline: '6 months protects the ramp-up — it’s performance accountability.',
     answer:
-      'I get that — you’re committing before you’ve seen results. The six months is really about protecting you as much as us: it takes three to four months to properly ramp a listing — build the reviews, optimise pricing, find the audience. With a one-month term, owners would exit before the listing found its feet. The properties that see the best results are the ones that let the process run.',
+      'I get that — you’re committing before you’ve seen results. But think of it as performance accountability, not lock-in: it takes three to four months to properly ramp a listing — build the reviews, optimise pricing, find the audience. In months 1–2 here’s exactly what we do; by month 3 you should be seeing real results. With a one-month term, owners would exit before the listing found its feet. The properties that see the best results are the ones that let the process run.',
     keywords: [
       'six months is long', 'long commitment', 'why six months',
       'thats a long tie in', 'too long', 'shorter contract',
-      'do i have to commit for six months', 'six month',
+      'do i have to commit for six months', 'six month', 'locked in',
+      'try it for less time', 'commit for 6 months',
     ],
     slide: null,
   },
@@ -619,6 +679,7 @@ export const FAQS = [
     id: 40,
     tier: 3,
     category: 'Legal & Tax',
+    profiles: ['Buy-to-STL'],
     question: 'Council tax or business rates?',
     headline: '140 available + 70 let → business rates route.',
     answer:
@@ -632,16 +693,18 @@ export const FAQS = [
   },
   {
     id: 41,
-    tier: 3,
+    tier: 2,
     category: 'Situations',
+    profiles: ['Abroad', 'STL Switch'],
     question: 'Can I use the property myself?',
-    headline: 'Block dates, we clear around them — pay only cleaning.',
+    headline: 'Yes — block dates, we clear around them, pay only cleaning.',
     answer:
-      'Yes — you block the dates on the calendar and we clear the surrounding bookings so it’s ready when you arrive; you just message the Slack channel to request a clean before you come in. The only cost is the cleaning fee for that stay. The key thing is lead time: in peak season, block early because confirmed bookings can’t be cancelled. In the quieter months you can block at short notice with minimal revenue impact.',
+      'Absolutely — it stays your property. You block the dates on the calendar and we clear the surrounding bookings so it’s ready when you arrive; you just message the Slack channel to request a clean before you come in. The only cost is the cleaning fee for that stay. The key thing is lead time: in peak season, block early because confirmed bookings can’t be cancelled. In the quieter months you can block at short notice with minimal revenue impact.',
     keywords: [
       'use it myself', 'stay there', 'personal use', 'block dates',
       'use the property', 'my own use', 'holiday in it', 'stay in it myself',
-      'can i use it', 'live in it sometimes',
+      'can i use it', 'live in it sometimes', 'can i stay in my own property',
+      'stay in my own home', 'holiday in my own',
     ],
     slide: null,
   },
@@ -649,6 +712,7 @@ export const FAQS = [
     id: 42,
     tier: 4,
     category: 'Situations',
+    profiles: ['Buy-to-STL', 'STL Switch'],
     question: 'Short-let feels riskier than a long let.',
     headline: 'Different risks, not more — upfront pay, vetting, AirCover.',
     answer:
@@ -659,5 +723,128 @@ export const FAQS = [
       'too risky',
     ],
     slide: null,
+  },
+
+  // ── Added from Lead Intelligence (high-frequency objections with no card) ──
+  {
+    id: 43,
+    tier: 1,
+    category: 'Service',
+    profiles: ALL_PROFILES,
+    question: 'How do I manage it if I live far away or abroad?',
+    headline: 'You don’t — we do. Full remote visibility from your phone.',
+    answer:
+      'You don’t manage it at all — we do, on the ground, wherever you are in the world. You get complete remote visibility: a dedicated Slack channel for anything that comes up, a live booking calendar, and monthly income statements. We handle check-ins, check-outs, cleaning, maintenance and every guest interaction locally, so distance makes no difference to how the property runs. Plenty of our owners are overseas or hours away and run everything from their phone.',
+    keywords: [
+      'managing the property remotely', 'manage it remotely', 'manage remotely',
+      'i live far away', 'i live abroad', 'im abroad', 'overseas',
+      'out of the country', 'how do i oversee it', 'remote management',
+      'far from the property', 'keep an eye on it from a distance',
+      'i wont be in the country', 'not nearby', 'different city',
+      'how do i keep on top of it',
+    ],
+    slide: 'Management',
+  },
+  {
+    id: 44,
+    tier: 1,
+    category: 'Fees',
+    profiles: ALL_PROFILES,
+    question: 'What do I actually keep after all the fees?',
+    headline: 'Net = gross minus ~3% platform, 15%+VAT us, cleaning, £42 software.',
+    answer:
+      'Here’s the full picture, not just a percentage. From the gross a guest pays: Airbnb keeps around 3% platform fee, we take our 15% + VAT management fee, and cleaning comes out — but cleaning is charged to the guest, so it’s largely self-funding. There’s a £42/month software fee. What’s left is your net — the figure on your monthly statement. The clearest way to see it is your net income laid out month by month for the first six months, which I’ll send as a worked example so there are no surprises.',
+    keywords: [
+      'how much do i actually keep', 'what do i keep', 'what do i actually keep',
+      'fee structure', 'understand the costs', 'understand the fees',
+      'total costs', 'all the costs', 'what are the total costs',
+      'how much of the income do i keep', 'net after fees', 'take home',
+      'breakdown of costs', 'what comes out', 'how much do i walk away with',
+    ],
+    slide: 'Investment Returns',
+  },
+  {
+    id: 45,
+    tier: 3,
+    category: 'Service',
+    profiles: ALL_PROFILES,
+    question: 'What’s the 72-hour access notice — can I get into my own property?',
+    headline: '72h notice via Slack to visit — protects confirmed bookings.',
+    answer:
+      'You can visit any time — we just ask for 72 hours’ notice via Slack so we can work around any confirmed guest bookings and make sure there’s no clash. It isn’t about restricting you; it’s what lets us protect confirmed stays and keep your reviews and income intact. For a proper personal stay, you block the dates on the calendar and we clear around them.',
+    keywords: [
+      '72 hour', '72-hour', 'seventy two hours', 'access notice',
+      'get into my own property', 'visit my property', 'access to my property',
+      'can i go to the property', 'owner access', 'notice to visit',
+      'how much notice to visit',
+    ],
+    slide: 'Management',
+  },
+  {
+    id: 46,
+    tier: 3,
+    category: 'Service',
+    profiles: ['Buy-to-STL', 'STL Switch', 'Ex-STL'],
+    question: 'What do you do to boost my listing’s ranking / the algorithm?',
+    headline: 'Fast replies, 100% listing, review velocity, Superhost, pricing.',
+    answer:
+      'Concrete things that move the Airbnb algorithm: fast guest response times (we aim well inside the thresholds that protect Superhost status), a 100%-complete, optimised listing, professional photography, and review velocity — getting your first reviews in quickly to build ranking signal. Add dynamic pricing that keeps you competitive every day, plus Superhost status once earned, and your listing gets materially more visibility and bookings than a self-managed one.',
+    keywords: [
+      'algorithm', 'algorithm boost', 'boost my ranking', 'listing ranking',
+      'search ranking', 'optimise the listing', 'optimize listing', 'seo',
+      'visibility', 'superhost', 'get to the top of search', 'how do you rank',
+      'ranking', 'how do you get more bookings',
+    ],
+    slide: 'How Stayful Works',
+  },
+  {
+    id: 47,
+    tier: 3,
+    category: 'Service',
+    profiles: ['Buy-to-STL', 'STL Switch', 'Ex-STL'],
+    question: 'Can I control the pricing or set a minimum nightly rate?',
+    headline: 'Dynamic pricing is ours, but we’ll set a floor with you.',
+    answer:
+      'Day-to-day pricing is handled by our dynamic system — it adjusts daily on demand, events and competitors, which is what maximises your annual total. But it’s collaborative: if you want a minimum nightly floor, or you disagree with a particular rate, we’ll set that with you. You’re never locked out of the conversation — most owners find that once they see the system out-earn a flat rate, they’re happy to let it run.',
+    keywords: [
+      'control the pricing', 'pricing control', 'set my own price',
+      'minimum nightly rate', 'set a minimum', 'set the rate myself',
+      'disagree with the price', 'i want control over pricing',
+      'can i set the price', 'more control over pricing',
+    ],
+    slide: 'How Stayful Works',
+  },
+  {
+    id: 48,
+    tier: 2,
+    category: 'Revenue',
+    profiles: ['Buy-to-STL', 'STL Switch', 'Abroad'],
+    question: 'I’m nervous about the early weeks before it gets going.',
+    headline: 'First 30 days: listing live, photos, first bookings & reviews.',
+    answer:
+      'That’s a fair concern — it’s execution risk, not the long-term model. Here’s what the first 30 days actually look like: listing created and optimised, professional photography live, you go live across the platforms, dynamic pricing starts working, and we push hard to land your first bookings and first reviews to build ranking signal. The early weeks are deliberately the most active period for us — that’s exactly when our work makes the biggest difference, which is why Year 1 is projected conservatively at 80%.',
+    keywords: [
+      'nervous about the early weeks', 'early weeks', 'first few weeks',
+      'before it gets going', 'slow start', 'first 30 days', 'first month',
+      'getting started slow', 'launch period', 'take a while to get going',
+      'how long until bookings', 'start slow',
+    ],
+    slide: 'Onboarding',
+  },
+  {
+    id: 49,
+    tier: 3,
+    category: 'Service',
+    profiles: ALL_PROFILES,
+    question: 'What if a guest steals or damages something?',
+    headline: 'Theft covered — deposit, ID checks, AirCover, before/after photos.',
+    answer:
+      'Every guest is ID-verified and vetted, and we hold a £200 security deposit per booking. We photograph the property before and after every stay, so if something is taken or damaged we have the evidence and pursue recovery through the deposit or Airbnb’s AirCover — up to £2.5M property damage, plus £100k per guest. We manage the entire claim, so you never deal with Airbnb directly, and the vast majority of stays are completely incident-free.',
+    keywords: [
+      'stolen', 'theft', 'steal', 'take my things', 'guest steals',
+      'something goes missing', 'rob', 'my belongings', 'valuables',
+      'damaged or stolen', 'what if they steal',
+    ],
+    slide: 'Vet Guests',
   },
 ];

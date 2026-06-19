@@ -110,6 +110,77 @@ body {
   }
 }
 
+/* ---------- Profile selector ---------- */
+.profile-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.profile-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-faint);
+  flex: none;
+}
+
+.profile-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.profile-chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-dim);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.profile-chip:hover {
+  color: var(--text);
+  border-color: var(--brand);
+}
+
+.profile-chip.active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+
+/* Profile tags on cards */
+.profile-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 0 0 10px;
+}
+
+.profile-tag {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--brand-bright);
+  background: rgba(93, 129, 86, 0.14);
+  border: 1px solid rgba(93, 129, 86, 0.3);
+  padding: 1px 7px;
+  border-radius: 999px;
+}
+
+.browse-profiles {
+  font-size: 10.5px;
+  color: var(--text-faint);
+  letter-spacing: 0.2px;
+}
+
 /* ---------- Listen view ---------- */
 .listen-view {
   flex: 1;

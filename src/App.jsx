@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { FAQS, CATEGORIES, TIERS } from './faqData.js';
+import { FAQS, CATEGORIES, TIERS, PROFILES } from './faqData.js';
 
 // Web Speech API — runs locally in the browser. No external request.
 const SpeechRecognition =
@@ -51,7 +51,9 @@ function detectCommand(text) {
 }
 
 // Score every FAQ against a window of recent speech. Returns ranked matches.
-function rankMatches(text) {
+// When a lead profile is active, cards relevant to that profile get a small
+// boost so the answers that matter for this lead type surface first.
+function rankMatches(text, profile) {
   const t = normalise(text);
   if (!t) return [];
   const words = new Set(t.split(' '));
@@ -69,6 +71,7 @@ function rankMatches(text) {
     for (const w of item.qwords) if (words.has(w)) score += 0.5;
     if (score > 0) {
       if (item.faq.tier === 1) score += 0.3; // gentle tie-break toward core
+      if (profile && item.faq.profiles?.includes(profile)) score += 0.4;
       results.push({ faq: item.faq, score });
     }
   }
@@ -122,6 +125,13 @@ function AnswerPanel({ faq, expanded, onToggle }) {
       </div>
       <h2 className="answer-question">{faq.question}</h2>
       <p className="answer-headline">{faq.headline}</p>
+      {faq.profiles && faq.profiles.length < PROFILES.length && (
+        <div className="profile-tags">
+          {faq.profiles.map((p) => (
+            <span key={p} className="profile-tag">{p}</span>
+          ))}
+        </div>
+      )}
       <button type="button" className="detail-toggle" onClick={onToggle}>
         {expanded ? '▾ Hide full answer' : '▸ Full answer'}
       </button>
@@ -144,7 +154,11 @@ export default function App() {
   const [expanded, setExpanded] = useState(true);
   const [mode, setMode] = useState('listen'); // 'listen' | 'browse'
   const [browseCat, setBrowseCat] = useState('All');
+  const [profile, setProfile] = useState(''); // '' = all profiles
   const [error, setError] = useState('');
+
+  const profileRef = useRef('');
+  profileRef.current = profile;
 
   const recRef = useRef(null);
   const listeningRef = useRef(false);
@@ -155,7 +169,7 @@ export default function App() {
 
   // Whenever new top matches arrive, snap focus to the strongest one.
   function applyMatches(windowText) {
-    const r = rankMatches(windowText);
+    const r = rankMatches(windowText, profileRef.current);
     if (r.length && r[0].score >= 2) {
       setRanked(r);
       setActiveIndex(0);
@@ -281,10 +295,13 @@ export default function App() {
   }
 
   const browseList = useMemo(() => {
-    const list =
-      browseCat === 'All' ? FAQS : FAQS.filter((f) => f.category === browseCat);
+    const list = FAQS.filter(
+      (f) =>
+        (browseCat === 'All' || f.category === browseCat) &&
+        (profile === '' || f.profiles?.includes(profile))
+    );
     return [...list].sort((a, b) => a.tier - b.tier || a.id - b.id);
-  }, [browseCat]);
+  }, [browseCat, profile]);
 
   return (
     <div className="app">
@@ -306,6 +323,29 @@ export default function App() {
           >
             {mode === 'listen' ? '☰ Browse' : '✕ Close'}
           </button>
+        </div>
+
+        <div className="profile-row">
+          <span className="profile-label">Lead profile</span>
+          <div className="profile-chips">
+            <button
+              type="button"
+              className={`profile-chip${profile === '' ? ' active' : ''}`}
+              onClick={() => setProfile('')}
+            >
+              All
+            </button>
+            {PROFILES.map((p) => (
+              <button
+                key={p}
+                type="button"
+                className={`profile-chip${profile === p ? ' active' : ''}`}
+                onClick={() => setProfile((cur) => (cur === p ? '' : p))}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 
@@ -414,6 +454,11 @@ export default function App() {
                 </div>
                 <span className="browse-q">{faq.question}</span>
                 <span className="browse-h">{faq.headline}</span>
+                {faq.profiles && faq.profiles.length < PROFILES.length && (
+                  <span className="browse-profiles">
+                    {faq.profiles.join(' · ')}
+                  </span>
+                )}
               </button>
             ))}
           </div>
