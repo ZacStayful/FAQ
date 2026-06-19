@@ -937,3 +937,41 @@ export const SMART_WORDS = {
   multiple: [30],
 };
 
+// Buying-intent classification of each question (from the Lead Intelligence
+// objection/signal analysis). What a lead is asking signals where they are:
+//   buying     = forward / closing signal (logistics, deal maths, evidence,
+//                algorithm, payouts, personal use, discount)
+//   evaluating = understanding / comparing (neutral, info-gathering)
+//   concern    = objection / risk / skepticism (friction)
+export const INTENTS = {
+  buying: { label: 'Buying signal', short: 'Buying', color: 'rgb(93,129,86)', weight: 2 },
+  evaluating: { label: 'Evaluating', short: 'Evaluating', color: '#d99a2b', weight: 1 },
+  concern: { label: 'Concern', short: 'Concern', color: '#c2685a', weight: 0 },
+};
+
+const INTENT_BY_ID = {
+  // Tier 1
+  1: 'evaluating', 2: 'evaluating', 5: 'evaluating', 7: 'concern',
+  8: 'evaluating', 14: 'buying', 17: 'concern', 29: 'evaluating',
+  31: 'concern', 36: 'evaluating', 43: 'concern', 44: 'evaluating',
+  // Tier 2
+  3: 'evaluating', 4: 'concern', 6: 'evaluating', 9: 'evaluating',
+  10: 'buying', 12: 'buying', 13: 'evaluating', 22: 'evaluating',
+  24: 'buying', 25: 'buying', 28: 'evaluating', 30: 'buying',
+  32: 'buying', 35: 'evaluating', 37: 'concern', 39: 'concern',
+  41: 'buying', 48: 'concern',
+  // Tier 3
+  11: 'concern', 15: 'evaluating', 16: 'evaluating', 18: 'concern',
+  19: 'concern', 20: 'evaluating', 21: 'evaluating', 23: 'evaluating',
+  26: 'buying', 27: 'evaluating', 33: 'evaluating', 34: 'evaluating',
+  38: 'buying', 40: 'buying', 45: 'concern', 46: 'buying',
+  47: 'concern', 49: 'concern',
+  // Tier 4
+  42: 'concern',
+};
+
+// Attach intent to each FAQ.
+for (const faq of FAQS) {
+  faq.intent = INTENT_BY_ID[faq.id] || 'evaluating';
+}
+

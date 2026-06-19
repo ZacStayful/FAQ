@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { FAQS, CATEGORIES, TIERS, PROFILES, SMART_WORDS } from './faqData.js';
+import { FAQS, CATEGORIES, TIERS, PROFILES, SMART_WORDS, INTENTS } from './faqData.js';
 
 // Web Speech API — runs locally in the browser. No external request.
 const SpeechRecognition =
@@ -129,6 +129,17 @@ function TierBadge({ tier }) {
   );
 }
 
+function IntentBadge({ intent }) {
+  const i = INTENTS[intent];
+  if (!i) return null;
+  return (
+    <span className="intent-badge" style={{ color: i.color, borderColor: i.color }}>
+      {intent === 'buying' ? '▲ ' : intent === 'concern' ? '▼ ' : '• '}
+      {i.short}
+    </span>
+  );
+}
+
 function SlideCommand({ command }) {
   const [copied, setCopied] = useState(false);
   function copy() {
@@ -155,6 +166,7 @@ function AnswerPanel({ faq, expanded, onToggle }) {
     <article className="answer-panel" key={faq.id}>
       <div className="answer-head">
         <TierBadge tier={faq.tier} />
+        <IntentBadge intent={faq.intent} />
         <span className="category-tag">{faq.category}</span>
         <span className="qid">Q{faq.id}</span>
       </div>
@@ -194,6 +206,7 @@ export default function App() {
   const [error, setError] = useState('');
   const [focused, setFocused] = useState(false); // search input focus
   const [suggestIndex, setSuggestIndex] = useState(-1);
+  const [viewed, setViewed] = useState([]); // FAQ ids the lead has prompted, this call
 
   const recRef = useRef(null);
   const listeningRef = useRef(false);
@@ -202,7 +215,7 @@ export default function App() {
 
   const ranked = useMemo(() => rankMatches(query, profile), [query, profile]);
   const current = pinned || ranked[activeIndex]?.faq || null;
-  const alternates = ranked.slice(0, 5);
+  const alternates = ranked.slice(0, 6);
   const suggestions = useMemo(
     () => (query.trim() ? ranked.slice(0, 6) : []),
     [query, ranked]
@@ -210,6 +223,33 @@ export default function App() {
   const topScore = ranked[0]?.score ?? 0;
   const approximate = !pinned && current && topScore < CLOSEST_MATCH_THRESHOLD;
   const showSuggest = focused && !pinned && suggestions.length > 0;
+
+  // Buying temperature — averages the intent of the questions looked up so far.
+  const temp = useMemo(() => {
+    if (!viewed.length) return { pct: 0, count: 0, label: 'No reads yet' };
+    const sum = viewed.reduce(
+      (a, id) => a + (INTENTS[FAQ_BY_ID[id]?.intent]?.weight ?? 1),
+      0
+    );
+    const pct = Math.round((sum / (viewed.length * 2)) * 100);
+    const label =
+      pct >= 66 ? 'Hot — strong buying signals'
+      : pct >= 45 ? 'Warm — engaged'
+      : pct >= 25 ? 'Cooling — mostly concerns'
+      : 'Cold — concerns';
+    return { pct, count: viewed.length, label };
+  }, [viewed]);
+
+  // Count an answer as "read" once it's been on screen briefly (ignores the
+  // flicker of partial matches while typing).
+  useEffect(() => {
+    if (!current) return;
+    const id = current.id;
+    const t = setTimeout(() => {
+      setViewed((v) => (v.includes(id) ? v : [...v, id]));
+    }, 1200);
+    return () => clearTimeout(t);
+  }, [current]);
 
   // New query → reset focus to the top match and clear any pinned card.
   useEffect(() => {
@@ -219,11 +259,28 @@ export default function App() {
     setSuggestIndex(-1);
   }, [query]);
 
+  // Picking a suggestion focuses that card but keeps the ranked options
+  // available below (and you can re-open suggestions with Back).
   function pickSuggestion(faq) {
-    setPinned(faq);
+    const idx = ranked.findIndex((r) => r.faq.id === faq.id);
+    setActiveIndex(idx >= 0 ? idx : 0);
     setFocused(false);
     setSuggestIndex(-1);
+    setExpanded(false);
     inputRef.current?.blur();
+  }
+
+  function goBack() {
+    if (pinned) {
+      setPinned(null);
+      setMode('browse');
+      return;
+    }
+    // Return to the recommended list: top match + re-open suggestions.
+    setActiveIndex(0);
+    setExpanded(false);
+    setFocused(true);
+    inputRef.current?.focus();
   }
 
   function onSearchKeyDown(e) {
@@ -393,6 +450,37 @@ export default function App() {
           </button>
         </div>
 
+        <div className="temp-row">
+          <div className="temp-meta">
+            <span className="temp-label">Buying temperature</span>
+            <span className="temp-status">
+              {temp.label}
+              {temp.count > 0 && <span className="temp-count"> · {temp.count} read</span>}
+            </span>
+          </div>
+          <div className="temp-bar">
+            <div
+              className="temp-fill"
+              style={{
+                width: `${temp.pct}%`,
+                background:
+                  temp.pct >= 66
+                    ? 'rgb(93,129,86)'
+                    : temp.pct >= 45
+                    ? '#d99a2b'
+                    : temp.pct >= 25
+                    ? '#c98a4a'
+                    : '#c2685a',
+              }}
+            />
+          </div>
+          {viewed.length > 0 && (
+            <button type="button" className="temp-reset" onClick={() => setViewed([])}>
+              Reset
+            </button>
+          )}
+        </div>
+
         <div className="profile-row">
           <span className="profile-label">Lead profile</span>
           <div className="profile-chips">
@@ -490,6 +578,12 @@ export default function App() {
             </p>
           )}
 
+          {current && (pinned || activeIndex > 0) && (
+            <button type="button" className="back-btn" onClick={goBack}>
+              ← Back to {pinned ? 'browse' : 'options'}
+            </button>
+          )}
+
           {current ? (
             <AnswerPanel
               faq={current}
@@ -508,7 +602,7 @@ export default function App() {
 
           {!pinned && alternates.length > 1 && (
             <div className="alternates">
-              <span className="alternates-label">also matched — tap or say “next”</span>
+              <span className="alternates-label">other options — tap or say “next”</span>
               <div className="alt-chips">
                 {alternates.map((a, i) => (
                   <button
@@ -521,6 +615,10 @@ export default function App() {
                       setExpanded(false);
                     }}
                   >
+                    <span
+                      className="alt-intent-dot"
+                      style={{ background: INTENTS[a.faq.intent]?.color }}
+                    />
                     {a.faq.headline}
                   </button>
                 ))}
@@ -553,6 +651,7 @@ export default function App() {
               >
                 <div className="browse-card-head">
                   <TierBadge tier={faq.tier} />
+                  <IntentBadge intent={faq.intent} />
                   <span className="category-tag">{faq.category}</span>
                 </div>
                 <span className="browse-q">{faq.question}</span>
