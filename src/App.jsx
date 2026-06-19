@@ -31,13 +31,14 @@ const INDEX = FAQS.map((faq) => {
   return { faq, phrases, qwords };
 });
 
+const FAQ_BY_ID = Object.fromEntries(FAQS.map((f) => [f.id, f]));
+
 // Voice commands the presenter can speak to drive the app hands-free.
 const COMMANDS = {
   next: ['next', 'next one', 'next answer'],
   back: ['back', 'previous', 'go back'],
   clear: ['clear', 'reset', 'start over', 'clear that'],
   browse: ['browse', 'browse all', 'show all', 'list'],
-  listen: ['listen', 'go back to listening'],
 };
 
 function detectCommand(text) {
@@ -50,7 +51,7 @@ function detectCommand(text) {
   return null;
 }
 
-// Score every FAQ against a window of recent speech. Returns ranked matches.
+// Score every FAQ against the query text. Returns ranked matches.
 // When a lead profile is active, cards relevant to that profile get a small
 // boost so the answers that matter for this lead type surface first.
 function rankMatches(text, profile) {
@@ -62,7 +63,6 @@ function rankMatches(text, profile) {
     let score = 0;
     for (const phrase of item.phrases) {
       if (phrase.includes(' ')) {
-        // multi-word phrase match — strong signal
         if (t.includes(phrase)) score += 3 + phrase.split(' ').length;
       } else if (words.has(phrase)) {
         score += 1.5;
@@ -70,7 +70,7 @@ function rankMatches(text, profile) {
     }
     for (const w of item.qwords) if (words.has(w)) score += 0.5;
     if (score > 0) {
-      if (item.faq.tier === 1) score += 0.3; // gentle tie-break toward core
+      if (item.faq.tier === 1) score += 0.3;
       if (profile && item.faq.profiles?.includes(profile)) score += 0.4;
       results.push({ faq: item.faq, score });
     }
@@ -78,11 +78,9 @@ function rankMatches(text, profile) {
   return results.sort((a, b) => b.score - a.score);
 }
 
-// Keep only the last N words so matching tracks the current utterance,
-// not everything said since the mic was turned on.
+// Keep only the last N words so matching tracks the current utterance.
 function recentWindow(text, words = 16) {
-  const parts = text.trim().split(/\s+/);
-  return parts.slice(-words).join(' ');
+  return text.trim().split(/\s+/).slice(-words).join(' ');
 }
 
 function TierBadge({ tier }) {
@@ -123,7 +121,8 @@ function AnswerPanel({ faq, expanded, onToggle }) {
         <span className="category-tag">{faq.category}</span>
         <span className="qid">Q{faq.id}</span>
       </div>
-      <h2 className="answer-question">{faq.question}</h2>
+      <p className="answer-question">{faq.question}</p>
+      {/* The headline is the short, speakable line — lead with it. */}
       <p className="answer-headline">{faq.headline}</p>
       {faq.profiles && faq.profiles.length < PROFILES.length && (
         <div className="profile-tags">
@@ -132,50 +131,46 @@ function AnswerPanel({ faq, expanded, onToggle }) {
           ))}
         </div>
       )}
-      <button type="button" className="detail-toggle" onClick={onToggle}>
-        {expanded ? '▾ Hide full answer' : '▸ Full answer'}
-      </button>
-      {expanded && <p className="answer-full">{faq.answer}</p>}
       {faq.slide ? (
         <SlideCommand command={faq.slide} />
       ) : (
         <p className="verbal-only">Verbal answer — no slide</p>
       )}
+      <button type="button" className="detail-toggle" onClick={onToggle}>
+        {expanded ? '▾ Hide detail' : '▸ Need more detail?'}
+      </button>
+      {expanded && <p className="answer-full">{faq.answer}</p>}
     </article>
   );
 }
 
 export default function App() {
+  const [query, setQuery] = useState('');
   const [listening, setListening] = useState(false);
   const [supported] = useState(!!SpeechRecognition);
-  const [heard, setHeard] = useState('');
-  const [ranked, setRanked] = useState([]); // [{faq, score}]
   const [activeIndex, setActiveIndex] = useState(0);
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
+  const [pinned, setPinned] = useState(null); // faq chosen from Browse
   const [mode, setMode] = useState('listen'); // 'listen' | 'browse'
   const [browseCat, setBrowseCat] = useState('All');
   const [profile, setProfile] = useState(''); // '' = all profiles
   const [error, setError] = useState('');
 
-  const profileRef = useRef('');
-  profileRef.current = profile;
-
   const recRef = useRef(null);
   const listeningRef = useRef(false);
   const finalRef = useRef('');
+  const inputRef = useRef(null);
 
-  const current = ranked[activeIndex]?.faq || null;
-  const alternates = ranked.slice(0, 4);
+  const ranked = useMemo(() => rankMatches(query, profile), [query, profile]);
+  const current = pinned || ranked[activeIndex]?.faq || null;
+  const alternates = ranked.slice(0, 5);
 
-  // Whenever new top matches arrive, snap focus to the strongest one.
-  function applyMatches(windowText) {
-    const r = rankMatches(windowText, profileRef.current);
-    if (r.length && r[0].score >= 2) {
-      setRanked(r);
-      setActiveIndex(0);
-      setExpanded(true);
-    }
-  }
+  // New query → reset focus to the top match and clear any pinned card.
+  useEffect(() => {
+    setActiveIndex(0);
+    setExpanded(false);
+    setPinned(null);
+  }, [query]);
 
   function handleCommand(cmd) {
     switch (cmd) {
@@ -187,15 +182,10 @@ export default function App() {
         break;
       case 'clear':
         finalRef.current = '';
-        setHeard('');
-        setRanked([]);
-        setActiveIndex(0);
+        setQuery('');
         break;
       case 'browse':
         setMode('browse');
-        break;
-      case 'listen':
-        setMode('listen');
         break;
       default:
         break;
@@ -223,15 +213,14 @@ export default function App() {
       }
       const live = (finalRef.current + interim).trim();
       const windowText = recentWindow(live);
-      setHeard(windowText);
 
       const cmd = detectCommand(normalise(windowText));
       if (cmd) {
         handleCommand(cmd);
-        finalRef.current = ''; // consume so the command word doesn't pollute matching
+        finalRef.current = '';
         return;
       }
-      applyMatches(windowText);
+      setQuery(windowText); // voice types straight into the search bar
     };
 
     rec.onerror = (e) => {
@@ -239,15 +228,12 @@ export default function App() {
         setError('Microphone permission denied — allow mic access to use voice.');
         listeningRef.current = false;
         setListening(false);
-      } else if (e.error === 'no-speech' || e.error === 'aborted') {
-        /* transient — onend will restart */
-      } else {
+      } else if (e.error !== 'no-speech' && e.error !== 'aborted') {
         setError(`Voice error: ${e.error}`);
       }
     };
 
     rec.onend = () => {
-      // Chrome ends recognition on pauses; restart if still in listening mode.
       if (listeningRef.current) {
         try {
           rec.start();
@@ -287,10 +273,24 @@ export default function App() {
     };
   }, []);
 
+  // "/" focuses search, Escape clears.
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === '/' && document.activeElement !== inputRef.current && mode === 'listen') {
+        e.preventDefault();
+        inputRef.current?.focus();
+      } else if (e.key === 'Escape') {
+        setQuery('');
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [mode]);
+
   function pickCard(faq) {
-    setRanked([{ faq, score: 99 }]);
-    setActiveIndex(0);
-    setExpanded(true);
+    setQuery('');
+    setPinned(faq);
+    setExpanded(false);
     setMode('listen');
   }
 
@@ -312,7 +312,7 @@ export default function App() {
             <h1>Stayful Sales Assistant</h1>
             <p className="subtitle">
               {mode === 'listen'
-                ? 'Hands-free · listens to the call and surfaces the answer'
+                ? 'Search or speak — the answer surfaces instantly'
                 : 'Browse all answers'}
             </p>
           </div>
@@ -351,37 +351,42 @@ export default function App() {
 
       {mode === 'listen' ? (
         <main className="listen-view">
-          <div className="mic-row">
+          <div className="search-row">
+            <input
+              ref={inputRef}
+              className="search-input"
+              type="text"
+              inputMode="search"
+              placeholder="Search a question…  ( / to focus )"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              autoFocus
+            />
+            {query && (
+              <button
+                type="button"
+                className="clear-btn"
+                onClick={() => setQuery('')}
+                title="Clear"
+              >
+                ✕
+              </button>
+            )}
             <button
               type="button"
-              className={`mic-btn${listening ? ' on' : ''}`}
+              className={`voice-btn${listening ? ' on' : ''}`}
               onClick={toggleListening}
               disabled={!supported}
+              title="Voice"
             >
-              <span className="mic-icon">{listening ? '●' : '🎤'}</span>
-              {listening ? 'Listening — tap to stop' : 'Tap to start listening'}
+              {listening ? '● Listening' : '🎤'}
             </button>
           </div>
 
           {!supported && (
-            <p className="error">
-              Voice isn’t supported here. Open in Chrome or Edge, or use Browse.
-            </p>
+            <p className="error">Voice unsupported here — typing still works.</p>
           )}
           {error && <p className="error">{error}</p>}
-
-          <div className={`heard${listening ? ' active' : ''}`}>
-            {heard ? (
-              <>
-                <span className="heard-label">heard</span>
-                <span className="heard-text">{heard}</span>
-              </>
-            ) : (
-              <span className="heard-hint">
-                Repeat the lead’s question back naturally — the answer appears as you speak.
-              </span>
-            )}
-          </div>
 
           {current ? (
             <AnswerPanel
@@ -391,15 +396,15 @@ export default function App() {
             />
           ) : (
             <div className="placeholder">
-              <p>No answer yet.</p>
+              <p>{query ? 'No match — try different words.' : 'Type or tap 🎤 to begin.'}</p>
               <p className="placeholder-sub">
-                Start listening and restate the question — e.g. “So you’re asking how
-                the fees work?”
+                Tip: restate the lead’s question — “so you’re asking how the fees
+                work?” — and the answer appears.
               </p>
             </div>
           )}
 
-          {alternates.length > 1 && (
+          {!pinned && alternates.length > 1 && (
             <div className="alternates">
               <span className="alternates-label">also matched — tap or say “next”</span>
               <div className="alt-chips">
@@ -411,7 +416,7 @@ export default function App() {
                     style={{ '--tier-color': TIERS[a.faq.tier].color }}
                     onClick={() => {
                       setActiveIndex(i);
-                      setExpanded(true);
+                      setExpanded(false);
                     }}
                   >
                     {a.faq.headline}
@@ -420,10 +425,6 @@ export default function App() {
               </div>
             </div>
           )}
-
-          <p className="cmd-hint">
-            Say <b>“next”</b>, <b>“clear”</b> or <b>“browse”</b> to navigate hands-free.
-          </p>
         </main>
       ) : (
         <main className="browse-view">
@@ -455,9 +456,7 @@ export default function App() {
                 <span className="browse-q">{faq.question}</span>
                 <span className="browse-h">{faq.headline}</span>
                 {faq.profiles && faq.profiles.length < PROFILES.length && (
-                  <span className="browse-profiles">
-                    {faq.profiles.join(' · ')}
-                  </span>
+                  <span className="browse-profiles">{faq.profiles.join(' · ')}</span>
                 )}
               </button>
             ))}
