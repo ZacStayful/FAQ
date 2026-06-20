@@ -847,6 +847,25 @@ export const FAQS = [
     ],
     slide: 'Vet Guests',
   },
+  {
+    id: 50,
+    tier: 1,
+    category: 'Service',
+    profiles: ALL_PROFILES,
+    question: 'What makes Stayful unique?',
+    headline: 'Review velocity — 1 review every 2–3 bookings vs 4–8 elsewhere.',
+    answer:
+      'Our edge is how fast we build reviews. When people estimate returns they miss how competitive a market really is on review count and rating — if you’re not actively collecting reviews, you never build enough establishment to rank and compete. We do this faster than most management companies: roughly one review every 2–3 bookings, versus the typical 4–8. That builds your rating and ranking quicker, which means more visibility, more bookings, and a listing that becomes genuinely competitive far sooner.',
+    keywords: [
+      'what makes stayful unique', 'what makes you unique', 'what makes you different',
+      'why choose stayful', 'what sets you apart', 'your usp',
+      'unique selling point', 'how are you different', 'whats your edge',
+      'why you', 'what makes you special', 'how do you get reviews',
+      'review velocity', 'how do you get more reviews', 'review rating',
+      'getting reviews', 'how competitive is the market', 'establishment',
+    ],
+    slide: 'How Stayful Works',
+  },
 ];
 
 // Smart words / concept synonyms.
@@ -922,9 +941,16 @@ export const SMART_WORDS = {
   corporate: [20],
   // Service / performance
   superhost: [46, 16],
-  reviews: [46, 3, 16],
-  ranking: [46],
+  reviews: [50, 46, 3, 16],
+  ranking: [46, 50],
   algorithm: [46],
+  unique: [50],
+  different: [50, 11],
+  difference: [50, 11],
+  usp: [50],
+  edge: [50],
+  special: [50],
+  competitive: [50, 4, 8],
   remote: [43, 13],
   abroad: [43, 41, 13],
   overseas: [43, 13],
@@ -968,6 +994,8 @@ const INTENT_BY_ID = {
   47: 'concern', 49: 'concern',
   // Tier 4
   42: 'concern',
+  // Differentiator
+  50: 'buying',
 };
 
 // Attach intent to each FAQ.
