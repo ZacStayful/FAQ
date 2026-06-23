@@ -171,7 +171,7 @@ function renderCue(text) {
         <mark
           key={i}
           className="cue-phrase"
-          title="Say this with Voice ON to move the slide"
+          title="Hold V and say this to move the slide"
         >
           <span className="cue-mic" aria-hidden="true">🎙</span>
           {m[1]}
