@@ -314,6 +314,7 @@ export default function App() {
   const [submitState, setSubmitState] = useState('idle'); // 'idle' | 'sending' | 'done' | 'error'
   const [deckUrl, setDeckUrl] = useState(() => loadSession(DECK_KEY, '')); // lead's presentation link
   const [deckReady, setDeckReady] = useState(false); // deck window opened & handshaked
+  const [deckState, setDeckState] = useState(null); // { page, section, index, total } — live deck position
   const [talking, setTalking] = useState(false); // hold-to-talk active (drives the deck)
 
   const recRef = useRef(null);
@@ -417,6 +418,15 @@ export default function App() {
       const d = e.data;
       if (!d || d.__stayful !== 1) return;
       if (d.type === 'deck-ready') setDeckReady(true);
+      if (d.type === 'deck-state') {
+        setDeckReady(true);
+        setDeckState({
+          page: d.page || null,
+          section: d.section || null,
+          index: typeof d.index === 'number' ? d.index : null,
+          total: typeof d.total === 'number' ? d.total : null,
+        });
+      }
     }
     window.addEventListener('message', onMsg);
     return () => window.removeEventListener('message', onMsg);
@@ -435,6 +445,7 @@ export default function App() {
     url.searchParams.set('present', '1'); // ensure presenter mode
     setError('');
     setDeckReady(false);
+    setDeckState(null);
     deckWin.current = window.open(url.toString(), 'stayful_deck');
   }
 
@@ -845,7 +856,21 @@ export default function App() {
           >
             Open presentation
           </button>
-          {deckReady && <span className="deck-status">● Connected</span>}
+          {deckReady && (
+            <span className="deck-status" title="Where the presentation is right now">
+              {deckState && deckState.page ? (
+                <>
+                  ● {deckState.page}
+                  {deckState.section ? <span className="deck-section"> › {deckState.section}</span> : null}
+                  {deckState.total ? (
+                    <span className="deck-num"> · {(deckState.index ?? 0) + 1}/{deckState.total}</span>
+                  ) : null}
+                </>
+              ) : (
+                '● Connected'
+              )}
+            </span>
+          )}
         </div>
       </header>
 

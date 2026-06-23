@@ -1019,3 +1019,13 @@ body {
   cursor: default;
   box-shadow: none;
 }
+
+.deck-status .deck-section {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.deck-status .deck-num {
+  color: var(--text-dim);
+  font-weight: 600;
+}
