@@ -160,6 +160,28 @@ function SlideCommand({ command }) {
   );
 }
 
+// Renders a headline/answer string, highlighting any [[voice command]] — the
+// exact phrase the presenter says (with Voice ON in the deck) to move the slide.
+function renderCue(text) {
+  return String(text || '')
+    .split(/(\[\[.+?\]\])/g)
+    .map((part, i) => {
+      const m = part.match(/^\[\[(.+?)\]\]$/);
+      return m ? (
+        <mark
+          key={i}
+          className="cue-phrase"
+          title="Say this with Voice ON to move the slide"
+        >
+          <span className="cue-mic" aria-hidden="true">🎙</span>
+          {m[1]}
+        </mark>
+      ) : (
+        part
+      );
+    });
+}
+
 function AnswerPanel({ faq, expanded, onToggle }) {
   if (!faq) return null;
   return (
@@ -172,7 +194,7 @@ function AnswerPanel({ faq, expanded, onToggle }) {
       </div>
       <p className="answer-question">{faq.question}</p>
       {/* The headline is the short, speakable line — lead with it. */}
-      <p className="answer-headline">{faq.headline}</p>
+      <p className="answer-headline">{renderCue(faq.headline)}</p>
       {faq.profiles && faq.profiles.length < PROFILES.length && (
         <div className="profile-tags">
           {faq.profiles.map((p) => (
@@ -188,7 +210,7 @@ function AnswerPanel({ faq, expanded, onToggle }) {
       <button type="button" className="detail-toggle" onClick={onToggle}>
         {expanded ? '▾ Hide detail' : '▸ Need more detail?'}
       </button>
-      {expanded && <p className="answer-full">{faq.answer}</p>}
+      {expanded && <p className="answer-full">{renderCue(faq.answer)}</p>}
     </article>
   );
 }
@@ -619,7 +641,7 @@ export default function App() {
                       className="alt-intent-dot"
                       style={{ background: INTENTS[a.faq.intent]?.color }}
                     />
-                    {a.faq.headline}
+                    {renderCue(a.faq.headline)}
                   </button>
                 ))}
               </div>
@@ -655,7 +677,7 @@ export default function App() {
                   <span className="category-tag">{faq.category}</span>
                 </div>
                 <span className="browse-q">{faq.question}</span>
-                <span className="browse-h">{faq.headline}</span>
+                <span className="browse-h">{renderCue(faq.headline)}</span>
                 {faq.profiles && faq.profiles.length < PROFILES.length && (
                   <span className="browse-profiles">{faq.profiles.join(' · ')}</span>
                 )}

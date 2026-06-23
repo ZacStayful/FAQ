@@ -47,7 +47,7 @@ export const FAQS = [
     category: 'Revenue',
     profiles: ALL_PROFILES,
     question: 'How much will I actually make?',
-    headline: 'Two figures — gross and net. The net is what matters.',
+    headline: 'Two figures — gross and net. The net is what matters. Open [[investment returns]].',
     answer:
       'We give you two figures — the gross, which is everything that comes in from guests, and the net, which is what actually lands in your bank after the platform fee, our management fee, the cleaning and the linen all come out. The net is the number that matters. Year one we project at 80% of the full run rate to be conservative while reviews build and pricing dials in; year two onwards is where properties typically settle.',
     keywords: [
@@ -55,7 +55,7 @@ export const FAQS = [
       'what will i make', 'what do i get', 'income', 'earnings', 'profit',
       'return', 'take home', 'how much will it make', 'what can it make',
     ],
-    slide: 'Investment Returns',
+    slide: 'investment returns',
   },
   {
     id: 2,
@@ -63,7 +63,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ALL_PROFILES,
     question: 'What do you actually do — is it fully hands-off?',
-    headline: 'Fully hands-off — we run everything except your bills.',
+    headline: 'Fully hands-off — we run everything except your bills. Show [[how Stayful works]].',
     answer:
       'We run the entire operation for you: guest communication, booking management, check-ins and check-outs, cleaning and linen changeovers after every stay, maintenance coordination and dynamic pricing. You genuinely don’t need to do anything operationally. The only things you stay responsible for are the bills — utilities, broadband, council tax and your mortgage.',
     keywords: [
@@ -72,7 +72,7 @@ export const FAQS = [
       'do you manage everything', 'is it managed', 'whats my involvement',
       'how much work is it for me',
     ],
-    slide: 'How Stayful Works',
+    slide: 'how Stayful works',
   },
   {
     id: 3,
@@ -80,7 +80,7 @@ export const FAQS = [
     category: 'Revenue',
     profiles: ALL_PROFILES,
     question: 'Why is Year 1 lower than Year 2?',
-    headline: 'Year 1 = 80% while reviews build and pricing dials in.',
+    headline: 'Year 1 = 80% while reviews build and pricing dials in. Open [[investment returns]].',
     answer:
       'Year one we always project at 80% of the full run rate. That’s because you’re building reviews, getting your pricing dialled in, and the listing is finding its audience. So year one is the deliberately conservative number. Year two onwards is where properties typically settle into their full run rate.',
     keywords: [
@@ -88,7 +88,7 @@ export const FAQS = [
       'lower at the start', 'why less in the first year', 'build up',
       'why is the first year less', 'year two',
     ],
-    slide: 'Investment Returns',
+    slide: 'investment returns',
   },
   {
     id: 4,
@@ -96,7 +96,7 @@ export const FAQS = [
     category: 'Revenue',
     profiles: ALL_PROFILES,
     question: 'Those numbers seem high — I’ve seen lower estimates elsewhere.',
-    headline: 'Live postcode data — and Year 1 is already discounted 20%.',
+    headline: 'Live postcode data — and Year 1 is already discounted 20%. Open [[investment returns]].',
     answer:
       'These are based on live market data from your specific postcode — the competing properties, current nightly rates and occupancy. I’d rather show you the real picture than an inflated number to win your business, and Year 1 is already discounted 20% for ramp-up. We also have a live Manchester property that did £56,900 last year against a £62k projection — so we track close to our numbers and we’re honest about the ramp-up.',
     keywords: [
@@ -104,7 +104,7 @@ export const FAQS = [
       'seen lower', 'lower estimates elsewhere', 'are these realistic',
       'inflated', 'that seems high', 'is that realistic', 'overestimating',
     ],
-    slide: 'Investment Returns',
+    slide: 'investment returns',
   },
   {
     id: 5,
@@ -112,7 +112,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ALL_PROFILES,
     question: 'Who handles cleaning and changeovers?',
-    headline: 'We handle every clean and linen change — guest-funded.',
+    headline: 'We handle every clean and linen change — guest-funded. See [[how management works]].',
     answer:
       'We do — cleaning and linen changeovers after every single stay are part of the service. The cleaning cost is actually charged to the guest as a cleaning fee, so it’s largely self-funding and doesn’t eat into your net. You never have to arrange or chase a clean.',
     keywords: [
@@ -120,7 +120,7 @@ export const FAQS = [
       'laundry', 'turnaround', 'clean between guests', 'housekeeping',
       'who does the cleaning',
     ],
-    slide: 'Management',
+    slide: 'how management works',
   },
   {
     id: 6,
@@ -128,7 +128,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ALL_PROFILES,
     question: 'What about maintenance and repairs?',
-    headline: 'We coordinate repairs — up to £300 without calling you.',
+    headline: 'We coordinate repairs — up to £300 without calling you. See [[how management works]].',
     answer:
       'We coordinate all maintenance for you. We can authorise repairs up to £300 without needing to call you so small issues get fixed fast; anything above that and we come to you first. We photograph the property before and after every stay, so if there’s damage we pursue recovery through AirCover or the guest’s security deposit and manage the whole claim.',
     keywords: [
@@ -136,7 +136,7 @@ export const FAQS = [
       'fix things', 'handyman', 'if something breaks', 'repair', 'plumber',
       'boiler', 'who deals with repairs',
     ],
-    slide: 'Management',
+    slide: 'how management works',
   },
   {
     id: 7,
@@ -144,7 +144,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ALL_PROFILES,
     question: 'What about problem guests — how do you vet bookings?',
-    headline: 'Every guest vetted — no parties, stag or hen bookings.',
+    headline: 'Every guest vetted — no parties, stag or hen bookings. See [[how we vet guests]].',
     answer:
       'Every guest is vetted before we accept the booking — ID verification, profile history and message screening. We don’t accept stag dos, hen parties or party bookings. If a guest causes any issues during a stay, we handle it — you won’t be getting calls at midnight.',
     keywords: [
@@ -154,7 +154,7 @@ export const FAQS = [
       'right type of guests', 'getting the right type of guests',
       'wrong type of guests', 'how do you screen guests',
     ],
-    slide: 'Vet Guests',
+    slide: 'how we vet guests',
   },
   {
     id: 8,
@@ -162,7 +162,7 @@ export const FAQS = [
     category: 'Revenue',
     profiles: ['Buy-to-STL', 'STL Switch'],
     question: 'How does short-let compare to a long let?',
-    headline: 'Net beats a long let — even on conservative Year 1.',
+    headline: 'Net beats a long let — even on conservative Year 1. Open [[investment returns]].',
     answer:
       'Let’s put the two side by side. With a traditional letting agent you’re typically looking at a 10–12% agency fee, plus void periods and maintenance you cover regardless. On the short-let side, even on our conservative Year 1 projection the net is materially higher per year, and by year two the uplift is larger again. The trade-off is it’s less predictable month to month — but the annual total, even at the conservative end, is clearly better.',
     keywords: [
@@ -171,7 +171,7 @@ export const FAQS = [
       'normal rental', 'assured tenancy', 'instead of renting it out',
       'long term tenant',
     ],
-    slide: 'Investment Returns',
+    slide: 'investment returns',
   },
   {
     id: 9,
@@ -179,7 +179,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ALL_PROFILES,
     question: 'Which platforms do you list on?',
-    headline: 'Airbnb, Booking.com + direct — daily dynamic pricing.',
+    headline: 'Airbnb, Booking.com + direct — daily dynamic pricing. Show [[how Stayful works]].',
     answer:
       'We list across Airbnb and Booking.com, and we’re building a direct booking channel as well. The dynamic pricing system adjusts your rate daily based on demand, local events and what competitors are doing — so you’re never leaving money on the table in peak periods and you stay competitive in the slower ones.',
     keywords: [
@@ -187,7 +187,7 @@ export const FAQS = [
       'channels', 'which sites', 'listing sites', 'what sites', 'vrbo',
       'where will it be listed',
     ],
-    slide: 'How Stayful Works',
+    slide: 'how Stayful works',
   },
   {
     id: 10,
@@ -195,7 +195,7 @@ export const FAQS = [
     category: 'Revenue',
     profiles: ['Buy-to-STL', 'STL Switch', 'Ex-STL'],
     question: 'Do you have real results I can look at?',
-    headline: 'Real 2025 results — York, Manchester, Lincoln.',
+    headline: 'Real 2025 results — York, Manchester, Lincoln. Show [[your experience]].',
     answer:
       'Yes — real Airbnb platform data from Jan–Dec 2025. A few from the portfolio: 17 Park Crescent, York — £54,688 gross / £34,727 net at 73.9% occupancy. 803 Eastbank Tower, Manchester — £56,921 / £35,917 at 68.7%. Museum Court, Lincoln — £57,328 / £36,288 at 64.2%. (Past performance of other properties doesn’t guarantee future results for yours.)',
     keywords: [
@@ -204,7 +204,7 @@ export const FAQS = [
       'can you show me', 'real numbers', 'have you done this before',
       'comparable property', 'comparable results',
     ],
-    slide: 'Your Experience',
+    slide: 'your experience',
   },
   {
     id: 11,
@@ -244,7 +244,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ALL_PROFILES,
     question: 'How will I know what’s happening with my property?',
-    headline: 'Dedicated Slack, live calendar, monthly statements.',
+    headline: 'Dedicated Slack, live calendar, monthly statements. Show [[how Stayful works]].',
     answer:
       'You get a dedicated Slack channel — that’s the main line of communication, and if something happens you hear about it there. We aim to respond within 24 hours during working hours. You also get a booking calendar where you can see all reservations in real time, and monthly income statements that go out between the 1st and 5th of every month for the previous month’s bookings.',
     keywords: [
@@ -252,7 +252,7 @@ export const FAQS = [
       'contact', 'keep in touch', 'reporting', 'kept informed',
       'how do you communicate', 'how will you keep me updated',
     ],
-    slide: 'How Stayful Works',
+    slide: 'how Stayful works',
   },
   {
     id: 14,
@@ -260,7 +260,7 @@ export const FAQS = [
     category: 'Setup',
     profiles: ALL_PROFILES,
     question: 'How long does it take to go live?',
-    headline: 'Live and taking bookings in 2–4 weeks from signing.',
+    headline: 'Live and taking bookings in 2–4 weeks from signing. Walk through [[onboarding]].',
     answer:
       'Once the agreement is signed, onboarding takes somewhere between two and four weeks — sometimes quicker if the property is ready to go. We handle the listing setup, get you across all the booking platforms, arrange the photography and do the final checks. You’d be live and taking bookings within a few weeks.',
     keywords: [
@@ -268,7 +268,7 @@ export const FAQS = [
       'how quickly', 'how fast can we start', 'when would it be live',
       'how long to set up', 'time to go live',
     ],
-    slide: 'Onboarding',
+    slide: 'onboarding',
   },
   {
     id: 15,
@@ -276,7 +276,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ALL_PROFILES,
     question: 'How does the dynamic pricing work?',
-    headline: 'Rate auto-adjusts daily on demand, events and competitors.',
+    headline: 'Rate auto-adjusts daily on demand, events and competitors. Show [[how Stayful works]].',
     answer:
       'The system adjusts your nightly rate every day based on demand, local events and what competitors are doing. That means you’re never leaving money on the table during peak periods, and you stay competitive — and booked — in the quieter ones. It’s constantly working to maximise your annual total rather than chasing a flat fixed rate.',
     keywords: [
@@ -284,7 +284,7 @@ export const FAQS = [
       'nightly rate', 'who decides the price', 'how is the price set',
       'who sets the rates', 'pricing strategy',
     ],
-    slide: 'How Stayful Works',
+    slide: 'how Stayful works',
   },
   {
     id: 16,
@@ -292,14 +292,14 @@ export const FAQS = [
     category: 'Revenue',
     profiles: ['Buy-to-STL', 'STL Switch'],
     question: 'What occupancy are you projecting?',
-    headline: '~80% of projected occupancy in Year 1.',
+    headline: '~80% of projected occupancy in Year 1. Open [[investment returns]].',
     answer:
       'The projection is based on real occupancy data for your area. In Year 1 we model roughly 80% of the projected occupancy figure to stay conservative while the listing ramps up and builds reviews; from Year 2 it settles to the full projected rate. Our managed properties also run at 4.7–4.8 average ratings, which lifts visibility and booking rate in the algorithm.',
     keywords: [
       'occupancy', 'how often booked', 'how full', 'booked nights',
       'vacancy', 'how many nights', 'occupancy rate', 'how booked up',
     ],
-    slide: 'Investment Returns',
+    slide: 'investment returns',
   },
   {
     id: 17,
@@ -307,7 +307,7 @@ export const FAQS = [
     category: 'Revenue',
     profiles: ALL_PROFILES,
     question: 'How consistent is the income — what about quiet months?',
-    headline: 'Even the quietest month earns — anchor on the annual average.',
+    headline: 'Even the quietest month earns — anchor on the annual average. Open [[investment returns]].',
     answer:
       'The income is less even than a long let month to month, but it’s consistent across the year. The best months are your peak season; the slowest are usually January and February. Even in those months you’re still earning a solid net figure — the worst month is typically comparable to what a long let pays, and your best months far exceed it. The number to anchor on is the annual average, which smooths the seasonality out.',
     keywords: [
@@ -317,7 +317,7 @@ export const FAQS = [
       'which months', 'seasonal', 'busy season', 'january and february',
       'dropping off in winter', 'income dropping off',
     ],
-    slide: 'Investment Returns',
+    slide: 'investment returns',
   },
   {
     id: 18,
@@ -325,7 +325,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ALL_PROFILES,
     question: 'What happens if there’s damage?',
-    headline: 'Photographed each stay — recovered via AirCover or deposit.',
+    headline: 'Photographed each stay — recovered via AirCover or deposit. See [[how we vet guests]].',
     answer:
       'We photograph the property before and after every stay. If there’s damage we pursue recovery through AirCover or the guest’s £200 security deposit, and we handle all of that for you. We can authorise repairs up to £300 without needing to call you; anything above that, we come to you first. If we genuinely can’t recover something, we’ll be honest with you about it.',
     keywords: [
@@ -333,7 +333,7 @@ export const FAQS = [
       'air cover', 'who pays for damage', 'if a guest breaks something',
       'damages', 'something gets damaged', 'damaged or stolen',
     ],
-    slide: 'Vet Guests',
+    slide: 'how we vet guests',
   },
   {
     id: 19,
@@ -357,7 +357,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ALL_PROFILES,
     question: 'Who actually books and stays in these properties?',
-    headline: 'Corporate, NHS & healthcare, leisure — 30–40% returning.',
+    headline: 'Corporate, NHS & healthcare, leisure — 30–40% returning. See [[who books]].',
     answer:
       'It depends on your location, but typically a mix of corporate contractors, NHS and healthcare workers, city-break and leisure tourism, university and relocation stays. Properties near hospital clusters do particularly well with NHS and medical-visitor bookings. We only highlight demand drivers that genuinely apply to your area, and 30–40% of our bookings come from returning guests — which significantly reduces the randomness of who’s in your property.',
     keywords: [
@@ -366,7 +366,7 @@ export const FAQS = [
       'who would stay there', 'who actually books', 'healthcare workers',
       'nhs workers', 'healthcare and nhs', 'nhs',
     ],
-    slide: 'Who Books',
+    slide: 'who books',
   },
   {
     id: 21,
@@ -374,7 +374,7 @@ export const FAQS = [
     category: 'Revenue',
     profiles: ['Buy-to-STL', 'STL Switch', 'Ex-STL'],
     question: 'Do your projections actually match reality?',
-    headline: 'Manchester: £56.9k actual vs £62k projected.',
+    headline: 'Manchester: £56.9k actual vs £62k projected. Show [[your experience]].',
     answer:
       'They track closely. The clearest example: a live Manchester property did £56,900 last year against a £62k projection. The figures come from live market data in your postcode — current listings, occupancy and nightly rates — and Year 1 is already discounted 20% for ramp-up. I’d always rather show you the real picture than an inflated number.',
     keywords: [
@@ -382,7 +382,7 @@ export const FAQS = [
       'reliable projections', 'actuals', 'do you hit the projections',
       'how accurate', 'do you actually achieve',
     ],
-    slide: 'Your Experience',
+    slide: 'your experience',
   },
   {
     id: 22,
@@ -390,7 +390,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ALL_PROFILES,
     question: 'What insurance and guest protection is in place?',
-    headline: '£200 deposit, ID checks, £100k + £2.5M AirCover.',
+    headline: '£200 deposit, ID checks, £100k + £2.5M AirCover. See [[how we vet guests]].',
     answer:
       'On every booking we collect a £200 security deposit and run ID checks. You’re covered by £100,000 of insurance per guest on top of Airbnb’s own AirCover, which covers up to £2.5 million in property damage. In practice the vast majority of stays are completely incident-free — but if something does happen, we manage the claim and you never deal with Airbnb directly.',
     keywords: [
@@ -398,7 +398,7 @@ export const FAQS = [
       'deposit', 'security', 'what protection', 'what cover', 'am i covered',
       'what if something goes wrong',
     ],
-    slide: 'Vet Guests',
+    slide: 'how we vet guests',
   },
   {
     id: 23,
@@ -406,7 +406,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ALL_PROFILES,
     question: 'Do you inspect the property?',
-    headline: 'Inspections 1–3 times a year, plus per-stay photos.',
+    headline: 'Inspections 1–3 times a year, plus per-stay photos. See [[how management works]].',
     answer:
       'Yes — we carry out property inspections, typically one to three times per year, to make sure standards are being maintained. Combined with the before-and-after photos on every stay, it means the condition of your property is actively monitored rather than left to chance.',
     keywords: [
@@ -414,7 +414,7 @@ export const FAQS = [
       'how often do you inspect', 'inspect', 'check on the property',
       'property checks',
     ],
-    slide: 'Management',
+    slide: 'how management works',
   },
   {
     id: 24,
@@ -422,7 +422,7 @@ export const FAQS = [
     category: 'Setup',
     profiles: ALL_PROFILES,
     question: 'What’s the onboarding process, step by step?',
-    headline: 'Sign → onboarding call → photos → listing → live.',
+    headline: 'Sign → onboarding call → photos → listing → live. Walk through [[onboarding]].',
     answer:
       'Day 1 the agreement is signed. Days 1–3 we have an onboarding call and record the property details. If furnishing is needed that’s a 2–4 week window. The smart thermostat and key safe go in during setup, then professional photography (a half day plus editing), the listing is created and optimised over 2–3 days, and finally you go live on all platforms with bookings open.',
     keywords: [
@@ -430,7 +430,7 @@ export const FAQS = [
       'setup process', 'how does setup work', 'what are the steps',
       'whats the process', 'getting started', 'what happens next',
     ],
-    slide: 'Onboarding',
+    slide: 'onboarding',
   },
   {
     id: 25,
@@ -438,7 +438,7 @@ export const FAQS = [
     category: 'Setup',
     profiles: ['Buy-to-STL', 'Abroad'],
     question: 'What if the property isn’t furnished yet?',
-    headline: 'We can furnish it — itemised quote, recovered fast.',
+    headline: 'We can furnish it — itemised quote, recovered fast. Walk through [[onboarding]].',
     answer:
       'If the property needs furnishing, that’s something we can coordinate for you — or you can do it independently. I’ll send a setup quote after this call with a clear itemised cost. Payment is 100% upfront, and it’s usually recovered within the first few months of bookings.',
     keywords: [
@@ -446,7 +446,7 @@ export const FAQS = [
       'empty property', 'furnish it', 'its not furnished', 'no furniture',
       'fit out',
     ],
-    slide: 'Onboarding',
+    slide: 'onboarding',
   },
   {
     id: 26,
@@ -470,7 +470,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ['STL Switch', 'Ex-STL'],
     question: 'Can I use my own cleaners?',
-    headline: 'Possible if they meet our standards — most use ours.',
+    headline: 'Possible if they meet our standards — most use ours. See [[how management works]].',
     answer:
       'In principle yes — but they’d need to meet our standards and be available on a flexible schedule, including same-day turnaround between check-out and check-in. In practice most owners find it simpler to use our cleaning network. If you have a trusted local cleaner, let’s have that conversation — we can sometimes work with them.',
     keywords: [
@@ -478,7 +478,7 @@ export const FAQS = [
       'can i clean it myself', 'own cleaning', 'my cleaner',
       'keep my cleaner',
     ],
-    slide: 'Management',
+    slide: 'how management works',
   },
   {
     id: 28,
@@ -486,7 +486,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ALL_PROFILES,
     question: 'What am I responsible for?',
-    headline: 'Only the bills — utilities, council tax, mortgage.',
+    headline: 'Only the bills — utilities, council tax, mortgage. Show [[how Stayful works]].',
     answer:
       'Just the bills — utilities, broadband, council tax and your mortgage. Everything operational sits with us: guest comms, bookings, check-ins and check-outs, cleaning, maintenance and pricing. The only one-off items on your side are the smart thermostat (~£200) and key safe (~£60).',
     keywords: [
@@ -494,7 +494,7 @@ export const FAQS = [
       'bills', 'utilities', 'council tax', 'whats on me',
       'what do i have to cover', 'what are my costs',
     ],
-    slide: 'How Stayful Works',
+    slide: 'how Stayful works',
   },
   {
     id: 29,
@@ -535,7 +535,7 @@ export const FAQS = [
     category: 'Revenue',
     profiles: ALL_PROFILES,
     question: 'What happens if the property sits empty?',
-    headline: 'Slow months are factored in — annual average wins.',
+    headline: 'Slow months are factored in — annual average wins. Open [[investment returns]].',
     answer:
       'In the low months — typically January through March — there will be slower periods, and that’s already factored into the projection. The way to think about it: even your worst month is probably comparable to what a traditional let pays, and your best months far exceed it. The annual average is what matters.',
     keywords: [
@@ -543,7 +543,7 @@ export const FAQS = [
       'quiet periods', 'what if it doesnt get booked', 'unbooked',
       'what if nobody books', 'income consistency', 'dropping off in winter',
     ],
-    slide: 'Investment Returns',
+    slide: 'investment returns',
   },
   {
     id: 32,
@@ -551,7 +551,7 @@ export const FAQS = [
     category: 'Revenue',
     profiles: ['Buy-to-STL', 'STL Switch'],
     question: 'What does this look like after my mortgage?',
-    headline: 'A clear monthly profit after the mortgage is covered.',
+    headline: 'A clear monthly profit after the mortgage is covered. Open [[investment returns]].',
     answer:
       'If we take your mortgage figure into account, even on the conservative Year 1 projection you’re looking at a clear monthly profit after the mortgage is covered — and that gap widens in Year 2 at the full run rate. It’s the cleanest way to see what actually lands in your pocket each month.',
     keywords: [
@@ -559,7 +559,7 @@ export const FAQS = [
       'profit after mortgage', 'net after mortgage', 'pay my mortgage',
       'after my mortgage', 'will it cover the mortgage',
     ],
-    slide: 'Investment Returns',
+    slide: 'investment returns',
   },
   {
     id: 33,
@@ -567,7 +567,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ALL_PROFILES,
     question: 'What’s your response time and office hours?',
-    headline: 'Slack, 24h reply · Mon–Fri 9:30–5:00.',
+    headline: 'Slack, 24h reply · Mon–Fri 9:30–5:00. See [[how management works]].',
     answer:
       'Your main line is the dedicated Slack channel, and we aim to respond within 24 hours during working hours. Office hours are Monday to Friday, 9:30am to 5:00pm. Slack is consistently the part of the service owners rate most highly — you’ll always know what’s happening.',
     keywords: [
@@ -575,7 +575,7 @@ export const FAQS = [
       'how quickly do you respond', 'support hours', 'how fast do you reply',
       'availability', 'opening hours',
     ],
-    slide: 'Management',
+    slide: 'how management works',
   },
   {
     id: 34,
@@ -583,7 +583,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ALL_PROFILES,
     question: 'Can I see my bookings and income?',
-    headline: 'Live booking calendar + monthly income statements.',
+    headline: 'Live booking calendar + monthly income statements. See [[how management works]].',
     answer:
       'Yes — you get a booking calendar showing all reservations in real time, plus monthly income statements that go out between the 1st and 5th of every month for the previous month’s completed bookings. Full visibility, without you having to chase anything.',
     keywords: [
@@ -591,7 +591,7 @@ export const FAQS = [
       'track income', 'view bookings', 'can i see whats booked',
       'do i get reports', 'monthly statement',
     ],
-    slide: 'Management',
+    slide: 'how management works',
   },
   {
     id: 35,
@@ -648,7 +648,7 @@ export const FAQS = [
     category: 'Setup',
     profiles: ALL_PROFILES,
     question: 'When and how do I get paid?',
-    headline: 'Paid 1st–5th each month for the prior month’s stays.',
+    headline: 'Paid 1st–5th each month for the prior month’s stays. Walk through [[onboarding]].',
     answer:
       'Payouts go out between the 1st and 5th of each month, covering the previous month’s completed stays. They land directly with you, with a monthly income statement showing exactly how the figure is made up.',
     keywords: [
@@ -656,7 +656,7 @@ export const FAQS = [
       'get paid', 'payment schedule', 'how do i get paid', 'when am i paid',
       'when does the money come',
     ],
-    slide: 'Onboarding',
+    slide: 'onboarding',
   },
   {
     id: 39,
@@ -732,7 +732,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ALL_PROFILES,
     question: 'How do I manage it if I live far away or abroad?',
-    headline: 'You don’t — we do. Full remote visibility from your phone.',
+    headline: 'You don’t — we do. Full remote visibility from your phone. See [[how management works]].',
     answer:
       'You don’t manage it at all — we do, on the ground, wherever you are in the world. You get complete remote visibility: a dedicated Slack channel for anything that comes up, a live booking calendar, and monthly income statements. We handle check-ins, check-outs, cleaning, maintenance and every guest interaction locally, so distance makes no difference to how the property runs. Plenty of our owners are overseas or hours away and run everything from their phone.',
     keywords: [
@@ -743,7 +743,7 @@ export const FAQS = [
       'i wont be in the country', 'not nearby', 'different city',
       'how do i keep on top of it',
     ],
-    slide: 'Management',
+    slide: 'how management works',
   },
   {
     id: 44,
@@ -751,7 +751,7 @@ export const FAQS = [
     category: 'Fees',
     profiles: ALL_PROFILES,
     question: 'What do I actually keep after all the fees?',
-    headline: 'Net = gross minus ~3% platform, 15%+VAT us, cleaning, £42 software.',
+    headline: 'Net = gross minus ~3% platform, 15%+VAT us, cleaning, £42 software. Open [[investment returns]].',
     answer:
       'Here’s the full picture, not just a percentage. From the gross a guest pays: Airbnb keeps around 3% platform fee, we take our 15% + VAT management fee, and cleaning comes out — but cleaning is charged to the guest, so it’s largely self-funding. There’s a £42/month software fee. What’s left is your net — the figure on your monthly statement. The clearest way to see it is your net income laid out month by month for the first six months, which I’ll send as a worked example so there are no surprises.',
     keywords: [
@@ -761,7 +761,7 @@ export const FAQS = [
       'how much of the income do i keep', 'net after fees', 'take home',
       'breakdown of costs', 'what comes out', 'how much do i walk away with',
     ],
-    slide: 'Investment Returns',
+    slide: 'investment returns',
   },
   {
     id: 45,
@@ -769,7 +769,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ALL_PROFILES,
     question: 'What’s the 72-hour access notice — can I get into my own property?',
-    headline: '72h notice via Slack to visit — protects confirmed bookings.',
+    headline: '72h notice via Slack to visit — protects confirmed bookings. See [[how management works]].',
     answer:
       'You can visit any time — we just ask for 72 hours’ notice via Slack so we can work around any confirmed guest bookings and make sure there’s no clash. It isn’t about restricting you; it’s what lets us protect confirmed stays and keep your reviews and income intact. For a proper personal stay, you block the dates on the calendar and we clear around them.',
     keywords: [
@@ -778,7 +778,7 @@ export const FAQS = [
       'can i go to the property', 'owner access', 'notice to visit',
       'how much notice to visit',
     ],
-    slide: 'Management',
+    slide: 'how management works',
   },
   {
     id: 46,
@@ -786,7 +786,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ['Buy-to-STL', 'STL Switch', 'Ex-STL'],
     question: 'What do you do to boost my listing’s ranking / the algorithm?',
-    headline: 'Fast replies, 100% listing, review velocity, Superhost, pricing.',
+    headline: 'Fast replies, 100% listing, review velocity, Superhost, pricing. Show [[how Stayful works]].',
     answer:
       'Concrete things that move the Airbnb algorithm: fast guest response times (we aim well inside the thresholds that protect Superhost status), a 100%-complete, optimised listing, professional photography, and review velocity — getting your first reviews in quickly to build ranking signal. Add dynamic pricing that keeps you competitive every day, plus Superhost status once earned, and your listing gets materially more visibility and bookings than a self-managed one.',
     keywords: [
@@ -795,7 +795,7 @@ export const FAQS = [
       'visibility', 'superhost', 'get to the top of search', 'how do you rank',
       'ranking', 'how do you get more bookings',
     ],
-    slide: 'How Stayful Works',
+    slide: 'how Stayful works',
   },
   {
     id: 47,
@@ -803,7 +803,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ['Buy-to-STL', 'STL Switch', 'Ex-STL'],
     question: 'Can I control the pricing or set a minimum nightly rate?',
-    headline: 'Dynamic pricing is ours, but we’ll set a floor with you.',
+    headline: 'Dynamic pricing is ours, but we’ll set a floor with you. Show [[how Stayful works]].',
     answer:
       'Day-to-day pricing is handled by our dynamic system — it adjusts daily on demand, events and competitors, which is what maximises your annual total. But it’s collaborative: if you want a minimum nightly floor, or you disagree with a particular rate, we’ll set that with you. You’re never locked out of the conversation — most owners find that once they see the system out-earn a flat rate, they’re happy to let it run.',
     keywords: [
@@ -812,7 +812,7 @@ export const FAQS = [
       'disagree with the price', 'i want control over pricing',
       'can i set the price', 'more control over pricing',
     ],
-    slide: 'How Stayful Works',
+    slide: 'how Stayful works',
   },
   {
     id: 48,
@@ -820,7 +820,7 @@ export const FAQS = [
     category: 'Revenue',
     profiles: ['Buy-to-STL', 'STL Switch', 'Abroad'],
     question: 'I’m nervous about the early weeks before it gets going.',
-    headline: 'First 30 days: listing live, photos, first bookings & reviews.',
+    headline: 'First 30 days: listing live, photos, first bookings & reviews. Walk through [[onboarding]].',
     answer:
       'That’s a fair concern — it’s execution risk, not the long-term model. Here’s what the first 30 days actually look like: listing created and optimised, professional photography live, you go live across the platforms, dynamic pricing starts working, and we push hard to land your first bookings and first reviews to build ranking signal. The early weeks are deliberately the most active period for us — that’s exactly when our work makes the biggest difference, which is why Year 1 is projected conservatively at 80%.',
     keywords: [
@@ -829,7 +829,7 @@ export const FAQS = [
       'getting started slow', 'launch period', 'take a while to get going',
       'how long until bookings', 'start slow',
     ],
-    slide: 'Onboarding',
+    slide: 'onboarding',
   },
   {
     id: 49,
@@ -837,7 +837,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ALL_PROFILES,
     question: 'What if a guest steals or damages something?',
-    headline: 'Theft covered — deposit, ID checks, AirCover, before/after photos.',
+    headline: 'Theft covered — deposit, ID checks, AirCover, before/after photos. See [[how we vet guests]].',
     answer:
       'Every guest is ID-verified and vetted, and we hold a £200 security deposit per booking. We photograph the property before and after every stay, so if something is taken or damaged we have the evidence and pursue recovery through the deposit or Airbnb’s AirCover — up to £2.5M property damage, plus £100k per guest. We manage the entire claim, so you never deal with Airbnb directly, and the vast majority of stays are completely incident-free.',
     keywords: [
@@ -845,7 +845,7 @@ export const FAQS = [
       'something goes missing', 'rob', 'my belongings', 'valuables',
       'damaged or stolen', 'what if they steal',
     ],
-    slide: 'Vet Guests',
+    slide: 'how we vet guests',
   },
   {
     id: 50,
@@ -853,7 +853,7 @@ export const FAQS = [
     category: 'Service',
     profiles: ALL_PROFILES,
     question: 'What makes Stayful unique?',
-    headline: 'Review velocity — 1 review every 2–3 bookings vs 4–8 elsewhere.',
+    headline: 'Review velocity — 1 review every 2–3 bookings vs 4–8 elsewhere. Show [[how Stayful works]].',
     answer:
       'Our edge is how fast we build reviews. When people estimate returns they miss how competitive a market really is on review count and rating — if you’re not actively collecting reviews, you never build enough establishment to rank and compete. We do this faster than most management companies: roughly one review every 2–3 bookings, versus the typical 4–8. That builds your rating and ranking quicker, which means more visibility, more bookings, and a listing that becomes genuinely competitive far sooner.',
     keywords: [
@@ -864,7 +864,7 @@ export const FAQS = [
       'review velocity', 'how do you get more reviews', 'review rating',
       'getting reviews', 'how competitive is the market', 'establishment',
     ],
-    slide: 'How Stayful Works',
+    slide: 'how Stayful works',
   },
 ];
 

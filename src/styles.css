@@ -540,6 +540,26 @@ body {
   font-style: italic;
 }
 
+/* ---------- Inline voice-command highlight ---------- */
+/* The [[phrase]] woven into a headline/answer — the exact words to say
+   (with Voice ON in the deck) to move the slide. */
+.cue-phrase {
+  background: rgba(93, 129, 86, 0.28);
+  color: #fff;
+  font-weight: 700;
+  padding: 1px 7px 2px;
+  border-radius: 6px;
+  box-shadow: inset 0 -2px 0 var(--brand-bright);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.cue-mic {
+  font-size: 0.82em;
+  margin-right: 3px;
+  opacity: 0.9;
+}
+
 /* ---------- Say-this command ---------- */
 .say-command {
   display: flex;
