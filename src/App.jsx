@@ -52,6 +52,7 @@ const FAQ_BY_ID = Object.fromEntries(FAQS.map((f) => [f.id, f]));
 // mid-meeting (cleared when the browser tab closes).
 const LEAD_KEY = 'stayful_lead';
 const VIEWED_KEY = 'stayful_viewed';
+const DECK_KEY = 'stayful_deck';
 function loadSession(key, fallback) {
   if (typeof sessionStorage === 'undefined') return fallback;
   try {
@@ -299,7 +300,7 @@ export default function App() {
   const [listening, setListening] = useState(false);
   const [supported] = useState(!!SpeechRecognition);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true); // detail open by default so the woven cue is visible
   const [pinned, setPinned] = useState(null); // faq chosen from Browse / suggestion
   const [mode, setMode] = useState('listen'); // 'listen' | 'browse'
   const [browseCat, setBrowseCat] = useState('All');
@@ -311,11 +312,18 @@ export default function App() {
   const [lead, setLead] = useState(() => loadSession(LEAD_KEY, null)); // { itemId, name, email } | null
   const [showLeadModal, setShowLeadModal] = useState(() => !loadSession(LEAD_KEY, null));
   const [submitState, setSubmitState] = useState('idle'); // 'idle' | 'sending' | 'done' | 'error'
+  const [deckUrl, setDeckUrl] = useState(() => loadSession(DECK_KEY, '')); // lead's presentation link
+  const [deckReady, setDeckReady] = useState(false); // deck window opened & handshaked
+  const [talking, setTalking] = useState(false); // hold-to-talk active (drives the deck)
 
   const recRef = useRef(null);
   const listeningRef = useRef(false);
   const finalRef = useRef('');
   const inputRef = useRef(null);
+  const deckWin = useRef(null); // handle to the opened presentation window
+  const talkRecRef = useRef(null); // dedicated push-to-talk recognizer
+  const talkingRef = useRef(false);
+  const talkFinalRef = useRef('');
 
   const ranked = useMemo(() => rankMatches(query, profile), [query, profile]);
   const current = pinned || ranked[activeIndex]?.faq || null;
@@ -395,10 +403,137 @@ export default function App() {
     }
   }
 
+  // ---- Presentation control (drive the deck from this tab) -----------------
+  useEffect(() => {
+    try {
+      if (deckUrl) sessionStorage.setItem(DECK_KEY, deckUrl);
+      else sessionStorage.removeItem(DECK_KEY);
+    } catch {}
+  }, [deckUrl]);
+
+  // The deck (opened by us) posts back when it's ready to receive commands.
+  useEffect(() => {
+    function onMsg(e) {
+      const d = e.data;
+      if (!d || d.__stayful !== 1) return;
+      if (d.type === 'deck-ready') setDeckReady(true);
+    }
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  function openDeck() {
+    const raw = deckUrl.trim();
+    if (!raw) return;
+    let url;
+    try {
+      url = new URL(raw);
+    } catch {
+      setError('That presentation link doesn’t look like a URL.');
+      return;
+    }
+    url.searchParams.set('present', '1'); // ensure presenter mode
+    setError('');
+    setDeckReady(false);
+    deckWin.current = window.open(url.toString(), 'stayful_deck');
+  }
+
+  // Send recognised speech to the deck window (cross-origin postMessage).
+  function sendToDeck(phrase) {
+    const w = deckWin.current;
+    if (!w || w.closed || !phrase) return;
+    let origin = '*';
+    try {
+      origin = new URL(deckUrl).origin;
+    } catch {}
+    try {
+      w.postMessage({ __stayful: 1, type: 'cue', phrase }, origin);
+    } catch {}
+  }
+
+  // Hold-to-talk: a dedicated recognizer, separate from the search mic, that
+  // relays what the presenter says to the deck (it ignores non-command chatter).
+  function startTalk() {
+    if (!SpeechRecognition || talkingRef.current) return;
+    if (!deckWin.current || deckWin.current.closed) return; // nothing to drive
+    if (listeningRef.current) stopListening(); // mutually exclusive with search mic
+    const rec = new SpeechRecognition();
+    rec.lang = 'en-GB';
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.onresult = (event) => {
+      let interim = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const r = event.results[i];
+        if (r.isFinal) talkFinalRef.current += r[0].transcript + ' ';
+        else interim += r[0].transcript;
+      }
+      sendToDeck(recentWindow((talkFinalRef.current + interim).trim()));
+    };
+    rec.onend = () => {
+      if (talkingRef.current) {
+        try {
+          rec.start();
+        } catch {}
+      }
+    };
+    rec.onerror = (e) => {
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+        setError('Microphone permission denied — allow mic access to use voice.');
+        talkingRef.current = false;
+        setTalking(false);
+      }
+    };
+    talkRecRef.current = rec;
+    talkingRef.current = true;
+    setTalking(true);
+    talkFinalRef.current = '';
+    try {
+      rec.start();
+    } catch {}
+  }
+
+  function stopTalk() {
+    if (!talkingRef.current) return;
+    talkingRef.current = false;
+    setTalking(false);
+    talkFinalRef.current = '';
+    try {
+      talkRecRef.current?.stop();
+    } catch {}
+  }
+
+  // Hold V to talk to the deck (when not typing in the search box).
+  useEffect(() => {
+    function isTyping() {
+      const tag = (document.activeElement && document.activeElement.tagName) || '';
+      return tag === 'INPUT' || tag === 'TEXTAREA';
+    }
+    function down(e) {
+      if ((e.key === 'v' || e.key === 'V') && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        if (isTyping() || e.repeat) return;
+        if (!deckWin.current || deckWin.current.closed) return;
+        e.preventDefault();
+        startTalk();
+      }
+    }
+    function up(e) {
+      if (e.key === 'v' || e.key === 'V') stopTalk();
+    }
+    window.addEventListener('keydown', down);
+    window.addEventListener('keyup', up);
+    window.addEventListener('blur', stopTalk);
+    return () => {
+      window.removeEventListener('keydown', down);
+      window.removeEventListener('keyup', up);
+      window.removeEventListener('blur', stopTalk);
+    };
+  }, [deckUrl]);
+
   // New query → reset focus to the top match and clear any pinned card.
   useEffect(() => {
     setActiveIndex(0);
-    setExpanded(false);
+    setExpanded(true);
     setPinned(null);
     setSuggestIndex(-1);
   }, [query]);
@@ -410,7 +545,7 @@ export default function App() {
     setActiveIndex(idx >= 0 ? idx : 0);
     setFocused(false);
     setSuggestIndex(-1);
-    setExpanded(false);
+    setExpanded(true);
     inputRef.current?.blur();
   }
 
@@ -422,7 +557,7 @@ export default function App() {
     }
     // Return to the recommended list: top match + re-open suggestions.
     setActiveIndex(0);
-    setExpanded(false);
+    setExpanded(true);
     setFocused(true);
     inputRef.current?.focus();
   }
@@ -539,6 +674,10 @@ export default function App() {
     return () => {
       listeningRef.current = false;
       recRef.current?.stop();
+      talkingRef.current = false;
+      try {
+        talkRecRef.current?.stop();
+      } catch {}
     };
   }, []);
 
@@ -559,7 +698,7 @@ export default function App() {
   function pickCard(faq) {
     setQuery('');
     setPinned(faq);
-    setExpanded(false);
+    setExpanded(true);
     setMode('listen');
   }
 
@@ -688,6 +827,26 @@ export default function App() {
               : `Submit to Monday${viewed.length ? ` (${viewed.length})` : ''}`}
           </button>
         </div>
+
+        <div className="deck-bar">
+          <input
+            className="deck-input"
+            type="url"
+            inputMode="url"
+            placeholder="Paste the lead’s presentation link…"
+            value={deckUrl}
+            onChange={(e) => setDeckUrl(e.target.value)}
+          />
+          <button
+            type="button"
+            className="deck-open"
+            onClick={openDeck}
+            disabled={!deckUrl.trim()}
+          >
+            Open presentation
+          </button>
+          {deckReady && <span className="deck-status">● Connected</span>}
+        </div>
       </header>
 
       {mode === 'listen' ? (
@@ -797,7 +956,7 @@ export default function App() {
                     style={{ '--tier-color': TIERS[a.faq.tier].color }}
                     onClick={() => {
                       setActiveIndex(i);
-                      setExpanded(false);
+                      setExpanded(true);
                     }}
                   >
                     <span
@@ -853,6 +1012,26 @@ export default function App() {
       <footer className="app-footer">
         Confidential — internal use only · Presenter reference, not visible to the lead
       </footer>
+
+      <button
+        type="button"
+        className={`talk-pill${talking ? ' on' : ''}`}
+        disabled={!deckReady}
+        onPointerDown={(e) => {
+          e.preventDefault();
+          startTalk();
+        }}
+        onPointerUp={stopTalk}
+        onPointerLeave={stopTalk}
+        onPointerCancel={stopTalk}
+        title={
+          deckReady
+            ? 'Hold (or hold V) and read the highlighted command to move the slide'
+            : 'Open the presentation first'
+        }
+      >
+        🎙 {talking ? 'Listening…' : deckReady ? 'Hold V to talk' : 'Presentation not open'}
+      </button>
     </div>
   );
 }

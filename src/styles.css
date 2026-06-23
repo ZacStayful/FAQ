@@ -931,3 +931,91 @@ body {
 .submit-monday.error {
   background: var(--amber);
 }
+
+/* ---------- Presentation connection + hold-to-talk ---------- */
+.deck-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.deck-input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 11px;
+  font-size: 12px;
+  color: var(--text);
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  outline: none;
+}
+
+.deck-input:focus {
+  border-color: var(--brand);
+}
+
+.deck-open {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 6px 13px;
+  cursor: pointer;
+}
+
+.deck-open:hover:not(:disabled) {
+  border-color: var(--brand);
+  color: var(--brand-bright);
+}
+
+.deck-open:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.deck-status {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brand-bright);
+}
+
+.talk-pill {
+  position: fixed;
+  left: 18px;
+  bottom: 18px;
+  z-index: 90;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 9px 15px;
+  border-radius: 99px;
+  cursor: pointer;
+  color: var(--text-dim);
+  background: rgba(26, 36, 24, 0.92);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.talk-pill.on {
+  color: #fff;
+  background: var(--brand);
+  border-color: var(--brand-bright);
+}
+
+.talk-pill:disabled {
+  opacity: 0.4;
+  cursor: default;
+  box-shadow: none;
+}
