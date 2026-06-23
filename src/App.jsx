@@ -316,6 +316,7 @@ export default function App() {
   const [deckReady, setDeckReady] = useState(false); // deck window opened & handshaked
   const [deckState, setDeckState] = useState(null); // { page, section, index, total } — live deck position
   const [talking, setTalking] = useState(false); // hold-to-talk active (drives the deck)
+  const [heard, setHeard] = useState(''); // last speech relayed to the deck (visible feedback)
 
   const recRef = useRef(null);
   const listeningRef = useRef(false);
@@ -479,7 +480,9 @@ export default function App() {
         if (r.isFinal) talkFinalRef.current += r[0].transcript + ' ';
         else interim += r[0].transcript;
       }
-      sendToDeck(recentWindow((talkFinalRef.current + interim).trim()));
+      const text = recentWindow((talkFinalRef.current + interim).trim());
+      if (text) setHeard(text);
+      sendToDeck(text);
     };
     rec.onend = () => {
       if (talkingRef.current) {
@@ -498,6 +501,7 @@ export default function App() {
     talkRecRef.current = rec;
     talkingRef.current = true;
     setTalking(true);
+    setHeard('');
     talkFinalRef.current = '';
     try {
       rec.start();
@@ -1038,25 +1042,30 @@ export default function App() {
         Confidential — internal use only · Presenter reference, not visible to the lead
       </footer>
 
-      <button
-        type="button"
-        className={`talk-pill${talking ? ' on' : ''}`}
-        disabled={!deckReady}
-        onPointerDown={(e) => {
-          e.preventDefault();
-          startTalk();
-        }}
-        onPointerUp={stopTalk}
-        onPointerLeave={stopTalk}
-        onPointerCancel={stopTalk}
-        title={
-          deckReady
-            ? 'Hold (or hold V) and read the highlighted command to move the slide'
-            : 'Open the presentation first'
-        }
-      >
-        🎙 {talking ? 'Listening…' : deckReady ? 'Hold V to talk' : 'Presentation not open'}
-      </button>
+      <div className="talk-wrap">
+        {talking && (
+          <div className="talk-heard">{heard ? `“${heard}”` : 'Listening — say the command…'}</div>
+        )}
+        <button
+          type="button"
+          className={`talk-pill${talking ? ' on' : ''}`}
+          disabled={!deckReady}
+          onPointerDown={(e) => {
+            e.preventDefault();
+            startTalk();
+          }}
+          onPointerUp={stopTalk}
+          onPointerLeave={stopTalk}
+          onPointerCancel={stopTalk}
+          title={
+            deckReady
+              ? 'Keep this window focused, then hold (or hold V) and read the highlighted command'
+              : 'Open the presentation first'
+          }
+        >
+          🎙 {talking ? 'Listening…' : deckReady ? 'Hold V to talk' : 'Presentation not open'}
+        </button>
+      </div>
     </div>
   );
 }

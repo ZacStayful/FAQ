@@ -985,11 +985,30 @@ body {
   color: var(--brand-bright);
 }
 
-.talk-pill {
+.talk-wrap {
   position: fixed;
   left: 18px;
   bottom: 18px;
   z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.talk-heard {
+  max-width: 320px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--text);
+  background: rgba(26, 36, 24, 0.96);
+  border: 1px solid var(--brand);
+  border-radius: 10px;
+  padding: 7px 11px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.talk-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
