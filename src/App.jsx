@@ -48,6 +48,20 @@ const INDEX = FAQS.map((faq) => {
 
 const FAQ_BY_ID = Object.fromEntries(FAQS.map((f) => [f.id, f]));
 
+// Per-session storage so an attached lead + the questions opened survive a refresh
+// mid-meeting (cleared when the browser tab closes).
+const LEAD_KEY = 'stayful_lead';
+const VIEWED_KEY = 'stayful_viewed';
+function loadSession(key, fallback) {
+  if (typeof sessionStorage === 'undefined') return fallback;
+  try {
+    const v = sessionStorage.getItem(key);
+    return v ? JSON.parse(v) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 // Voice commands the presenter can speak to drive the app hands-free.
 const COMMANDS = {
   next: ['next', 'next one', 'next answer'],
@@ -215,6 +229,71 @@ function AnswerPanel({ faq, expanded, onToggle }) {
   );
 }
 
+// Opens on first load: attach the lead being met so opened questions can be logged
+// to their Monday item. Skippable — skip to just browse.
+function LeadModal({ onAttach, onSkip }) {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState('idle'); // 'idle' | 'looking' | 'notfound' | 'error'
+
+  async function lookup(e) {
+    e.preventDefault();
+    const addr = email.trim();
+    if (!addr) return;
+    setStatus('looking');
+    try {
+      const res = await fetch('/api/lead?email=' + encodeURIComponent(addr));
+      const data = await res.json();
+      if (!res.ok) return setStatus('error');
+      if (!data.found) return setStatus('notfound');
+      onAttach({ itemId: data.item.id, name: data.item.name, email: addr });
+    } catch {
+      setStatus('error');
+    }
+  }
+
+  return (
+    <div className="lead-overlay">
+      <form className="lead-modal" onSubmit={lookup}>
+        <h2>Who’s this meeting with?</h2>
+        <p className="lead-sub">
+          Enter the lead’s email to log the questions they ask straight to their Monday
+          record. You can skip and just browse.
+        </p>
+        <input
+          className="lead-input"
+          type="email"
+          inputMode="email"
+          autoFocus
+          placeholder="lead@email.com"
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (status === 'notfound' || status === 'error') setStatus('idle');
+          }}
+        />
+        {status === 'notfound' && (
+          <p className="lead-msg warn">No lead found with that email on the board.</p>
+        )}
+        {status === 'error' && (
+          <p className="lead-msg warn">Couldn’t reach Monday — try again or skip.</p>
+        )}
+        <div className="lead-actions">
+          <button
+            type="submit"
+            className="lead-start"
+            disabled={status === 'looking' || !email.trim()}
+          >
+            {status === 'looking' ? 'Looking…' : 'Start'}
+          </button>
+          <button type="button" className="lead-skip" onClick={onSkip}>
+            Skip
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
 export default function App() {
   const [query, setQuery] = useState('');
   const [listening, setListening] = useState(false);
@@ -228,7 +307,10 @@ export default function App() {
   const [error, setError] = useState('');
   const [focused, setFocused] = useState(false); // search input focus
   const [suggestIndex, setSuggestIndex] = useState(-1);
-  const [viewed, setViewed] = useState([]); // FAQ ids the lead has prompted, this call
+  const [viewed, setViewed] = useState(() => loadSession(VIEWED_KEY, [])); // FAQ ids the lead has prompted, this call
+  const [lead, setLead] = useState(() => loadSession(LEAD_KEY, null)); // { itemId, name, email } | null
+  const [showLeadModal, setShowLeadModal] = useState(() => !loadSession(LEAD_KEY, null));
+  const [submitState, setSubmitState] = useState('idle'); // 'idle' | 'sending' | 'done' | 'error'
 
   const recRef = useRef(null);
   const listeningRef = useRef(false);
@@ -272,6 +354,46 @@ export default function App() {
     }, 1200);
     return () => clearTimeout(t);
   }, [current]);
+
+  // Persist the opened-questions list and the attached lead for this session.
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(VIEWED_KEY, JSON.stringify(viewed));
+    } catch {}
+  }, [viewed]);
+  useEffect(() => {
+    try {
+      if (lead) sessionStorage.setItem(LEAD_KEY, JSON.stringify(lead));
+      else sessionStorage.removeItem(LEAD_KEY);
+    } catch {}
+  }, [lead]);
+
+  // Opening more answers (or switching lead) re-enables Submit after a send.
+  useEffect(() => {
+    setSubmitState((s) => (s === 'sending' ? s : 'idle'));
+  }, [viewed.length, lead]);
+
+  // Push the opened questions to the lead's Monday item as an Update.
+  async function submitToMonday() {
+    if (!lead || viewed.length === 0) return;
+    setSubmitState('sending');
+    const questions = viewed
+      .map((id) => FAQ_BY_ID[id])
+      .filter(Boolean)
+      .map((f) => ({ question: f.question, category: f.category }));
+    try {
+      const res = await fetch('/api/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemId: lead.itemId, questions }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || 'Submit failed');
+      setSubmitState('done');
+    } catch {
+      setSubmitState('error');
+    }
+  }
 
   // New query → reset focus to the top match and clear any pinned card.
   useEffect(() => {
@@ -452,6 +574,15 @@ export default function App() {
 
   return (
     <div className="app">
+      {showLeadModal && (
+        <LeadModal
+          onAttach={(l) => {
+            setLead(l);
+            setShowLeadModal(false);
+          }}
+          onSkip={() => setShowLeadModal(false)}
+        />
+      )}
       <header className="app-header">
         <div className="brand">
           <span className={`brand-dot${listening ? ' live' : ''}`} />
@@ -524,6 +655,38 @@ export default function App() {
               </button>
             ))}
           </div>
+        </div>
+
+        <div className="lead-bar">
+          <button
+            type="button"
+            className={`lead-chip${lead ? ' attached' : ''}`}
+            onClick={() => setShowLeadModal(true)}
+            title={lead ? lead.email : 'Attach a lead'}
+          >
+            {lead ? `● ${lead.name}` : '+ Add lead'}
+          </button>
+          <button
+            type="button"
+            className={`submit-monday${submitState === 'done' ? ' done' : ''}${
+              submitState === 'error' ? ' error' : ''
+            }`}
+            disabled={
+              !lead ||
+              viewed.length === 0 ||
+              submitState === 'sending' ||
+              submitState === 'done'
+            }
+            onClick={submitToMonday}
+          >
+            {submitState === 'sending'
+              ? 'Sending…'
+              : submitState === 'done'
+              ? 'Sent ✓'
+              : submitState === 'error'
+              ? 'Retry submit'
+              : `Submit to Monday${viewed.length ? ` (${viewed.length})` : ''}`}
+          </button>
         </div>
       </header>
 
