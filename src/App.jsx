@@ -155,49 +155,54 @@ function IntentBadge({ intent }) {
   );
 }
 
-function SlideCommand({ command }) {
-  const [copied, setCopied] = useState(false);
-  function copy() {
-    try {
-      navigator.clipboard?.writeText(command);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1200);
-    } catch {
-      /* non-critical */
-    }
-  }
-  return (
-    <button type="button" className="say-command" onClick={copy} title="Copy command">
-      <span className="say-label">say this</span>
-      <span className="say-text">“{command}”</span>
-      <span className="say-arrow">{copied ? '✓ copied' : '→'}</span>
-    </button>
-  );
-}
 
-// Renders a headline/answer string, highlighting any [[voice command]] — the
-// exact phrase the presenter says (with Voice ON in the deck) to move the slide.
-function renderCue(text) {
+// Renders a headline/answer string, highlighting any [[command]]. When onGo is
+// provided, the highlighted phrase is a button that navigates the deck on click.
+function renderCue(text, onGo) {
   return String(text || '')
     .split(/(\[\[.+?\]\])/g)
     .map((part, i) => {
       const m = part.match(/^\[\[(.+?)\]\]$/);
-      return m ? (
-        <mark
+      if (!m) return part;
+      return (
+        <button
           key={i}
+          type="button"
           className="cue-phrase"
-          title="Hold V and say this to move the slide"
+          title={onGo ? 'Click to move the presentation to this slide' : ''}
+          onClick={onGo ? () => onGo(m[1]) : undefined}
         >
           <span className="cue-mic" aria-hidden="true">🎙</span>
           {m[1]}
-        </mark>
-      ) : (
-        part
+        </button>
       );
     });
 }
 
-function AnswerPanel({ faq, expanded, onToggle }) {
+function SlideCommand({ command, onGo, connected }) {
+  const [sent, setSent] = useState(false);
+  function go() {
+    if (!onGo) return;
+    onGo(command);
+    setSent(true);
+    setTimeout(() => setSent(false), 1200);
+  }
+  return (
+    <button
+      type="button"
+      className={`say-command${connected ? ' live' : ''}`}
+      onClick={go}
+      disabled={!connected}
+      title={connected ? 'Move the presentation to this slide' : 'Open the presentation first'}
+    >
+      <span className="say-label">{connected ? 'show on slide' : 'show (open deck)'}</span>
+      <span className="say-text">“{command}”</span>
+      <span className="say-arrow">{sent ? '✓ sent' : '▶'}</span>
+    </button>
+  );
+}
+
+function AnswerPanel({ faq, expanded, onToggle, onGo, connected }) {
   if (!faq) return null;
   return (
     <article className="answer-panel" key={faq.id}>
@@ -209,7 +214,7 @@ function AnswerPanel({ faq, expanded, onToggle }) {
       </div>
       <p className="answer-question">{faq.question}</p>
       {/* The headline is the short, speakable line — lead with it. */}
-      <p className="answer-headline">{renderCue(faq.headline)}</p>
+      <p className="answer-headline">{renderCue(faq.headline, onGo)}</p>
       {faq.profiles && faq.profiles.length < PROFILES.length && (
         <div className="profile-tags">
           {faq.profiles.map((p) => (
@@ -218,14 +223,14 @@ function AnswerPanel({ faq, expanded, onToggle }) {
         </div>
       )}
       {faq.slide ? (
-        <SlideCommand command={faq.slide} />
+        <SlideCommand command={faq.slide} onGo={onGo} connected={connected} />
       ) : (
         <p className="verbal-only">Verbal answer — no slide</p>
       )}
       <button type="button" className="detail-toggle" onClick={onToggle}>
         {expanded ? '▾ Hide detail' : '▸ Need more detail?'}
       </button>
-      {expanded && <p className="answer-full">{renderCue(faq.answer)}</p>}
+      {expanded && <p className="answer-full">{renderCue(faq.answer, onGo)}</p>}
     </article>
   );
 }
@@ -962,6 +967,8 @@ export default function App() {
               faq={current}
               expanded={expanded}
               onToggle={() => setExpanded((e) => !e)}
+              onGo={sendToDeck}
+              connected={deckReady}
             />
           ) : (
             <div className="placeholder">

@@ -546,12 +546,19 @@ body {
 .cue-phrase {
   background: rgba(93, 129, 86, 0.28);
   color: #fff;
+  font: inherit;
   font-weight: 700;
   padding: 1px 7px 2px;
+  border: none;
   border-radius: 6px;
   box-shadow: inset 0 -2px 0 var(--brand-bright);
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
+  cursor: pointer;
+}
+
+.cue-phrase:hover {
+  background: var(--brand);
 }
 
 .cue-mic {
@@ -578,8 +585,19 @@ body {
   transition: background 0.12s;
 }
 
-.say-command:hover {
+.say-command:hover:not(:disabled) {
   background: rgba(93, 129, 86, 0.24);
+}
+
+.say-command.live {
+  border-style: solid;
+  background: rgba(93, 129, 86, 0.22);
+}
+
+.say-command:disabled {
+  opacity: 0.6;
+  cursor: default;
+  border-color: var(--border);
 }
 
 .say-label {
